@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('category')->nullable();
             $table->string('cardIssueDate')->nullable();
             $table->string('cardExpireDate')->nullable();
-            $table->string('useType')->nullable();
+            $table->string('userType')->nullable();
             $table->string('status')->default(0);
             $table->rememberToken();
             $table->timestamps();

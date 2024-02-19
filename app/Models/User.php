@@ -32,7 +32,7 @@ class User extends Authenticatable
         'category',
         'cardIssueDate',
         'cardExpireDate',
-        'useType',
+        'userType',
         'status',
     ];
 

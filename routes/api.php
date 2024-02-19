@@ -17,3 +17,10 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('/signup', 'App\Http\Controllers\Api\AuthController@signup');
+Route::post('/login', 'App\Http\Controllers\Api\AuthController@login');
+Route::post('/forgot', 'App\Http\Controllers\Api\AuthController@forgot');
+Route::post('/password/reset', 'App\Http\Controllers\Api\AuthController@reset')->name('password.reset');
+Route::get('/getUserById/{id}', 'App\Http\Controllers\Api\AuthController@getUserById')->middleware('auth:sanctum');
+
