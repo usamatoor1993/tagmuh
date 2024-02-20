@@ -23,4 +23,5 @@ Route::post('/login', 'App\Http\Controllers\Api\AuthController@login');
 Route::post('/forgot', 'App\Http\Controllers\Api\AuthController@forgot');
 Route::post('/password/reset', 'App\Http\Controllers\Api\AuthController@reset');
 Route::get('/getUserById/{id}', 'App\Http\Controllers\Api\AuthController@getUserById')->middleware('auth:sanctum');
+Route::post('/reviewCompany', 'App\Http\Controllers\Api\GuestController@reviewCompany')->middleware('auth:sanctum');
 

@@ -34,6 +34,7 @@ class User extends Authenticatable
         'cardExpireDate',
         'userType',
         'status',
+        'rating',
     ];
 
     /**
