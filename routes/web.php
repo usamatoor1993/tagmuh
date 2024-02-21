@@ -13,6 +13,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+Route::get('/clear', function() {
+    $exitCode = Artisan::call('cache:clear');
+    $exitCode = Artisan::call('route:cache');
+    return "clear";
+});
+Route::get('/', 
+function () {
     return view('welcome');
 });
+Route::get('/forgot_password', function () {
+    return view('forget-password');
+})->name('password.reset');
