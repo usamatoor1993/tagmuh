@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Review;
+use App\Models\Service;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -50,5 +51,15 @@ class GuestController extends Controller
         }
 
         return response(['status' => 'success', 'code' => 200, 'message' => 'Vendor reviewed successfully'], 200);
+    }
+
+    public function getService(Request $request)
+    {
+        $service = Service::get();
+        if ($service->count() > 0) {
+            return response(['status' => 'success', 'code' => 200, 'data' => $service, 'message' => 'Get Services Successfully'], 200);
+        } else {
+            return response(['status' => 'error', 'code' => 403,'data' => null, 'message' => 'Get Services Failed']);
+        }
     }
 }
