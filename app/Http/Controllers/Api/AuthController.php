@@ -39,6 +39,10 @@ class AuthController extends Controller
                 'category' => 'required',
                 'cardIssueDate' => 'required',
                 'cardExpireDate' => 'required',
+                'BName' => 'required',
+                'description' => 'required',
+                'idCardFront' => 'required',
+                'idCardBack' => 'required',
             ]);
             if ($validator->fails()) {
                 return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'error' => $validator->errors(), 'message' => 'wrong or missing params'], 403);
@@ -71,9 +75,38 @@ class AuthController extends Controller
                 $coverName = null;
             }
 
+            if (isset($request->idCardFront)) {
+                if ($request->hasFile('idCardFront')) {
+                    $idFrontName = rand() . time() . '.' . $request->idCardFront->extension();
+                    $request->idCardFront->move(public_path('idCard'), $idFrontName);
+
+                } else {
+                    return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Image should be file'], 422);
+                }
+            } else {
+                $idFrontName = null;
+            }
+
+            if (isset($request->idCardBack)) {
+                if ($request->hasFile('idCardBack')) {
+                    $idBackName = rand() . time() . '.' . $request->idCardBack->extension();
+                    $request->idCardBack->move(public_path('idCard'), $idBackName);
+
+                } else {
+                    return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Image should be file'], 422);
+                }
+            } else {
+                $idBackName = null;
+            }
+            $idCard = [
+                'front' => $idFrontName,
+                'back' => $idBackName,
+            ];
+            $idCard = json_encode($idCard, true);
             $data = [
                 'firstName' => $request->firstName,
                 'lastName' => $request->lastName,
+                'BName' => $request->BName,
                 'email' => $request->email,
                 'Bemail' => $request->Bemail,
                 'phoneNumber' => $request->phoneNumber,
@@ -82,6 +115,8 @@ class AuthController extends Controller
                 'category' => $request->category,
                 'cardIssueDate' => $request->cardIssueDate,
                 'cardExpireDate' => $request->cardExpireDate,
+                'description' => $request->description,
+                'idCard' => $idCard,
                 'userType' => 'Company',
                 'image' =>   $imageName,
                 'coverPhoto' =>  $coverName,
@@ -97,14 +132,6 @@ class AuthController extends Controller
             return response(['status' => 'success', 'code' => 200, 'user' => $user, 'data' => $success, 'message' => 'User registered successfully as driver'], 200);
         }
         if ($request->userType == "Guest") {
-            // $validator = Validator::make($request->all(), [
-            //     'email' => 'required|email|unique:users,email',
-
-            // ]);
-            // if ($validator->fails()) {
-            //     return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'error' => $validator->errors(), 'message' => 'wrong or missing params'], 403);
-            // }
-
             if (isset($request->image)) {
                 if ($request->hasFile('image')) {
                     $imageName = rand() . time() . '.' . $request->image->extension();

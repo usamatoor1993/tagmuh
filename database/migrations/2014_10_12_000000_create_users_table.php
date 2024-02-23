@@ -29,6 +29,8 @@ return new class extends Migration
             $table->string('cardIssueDate')->nullable();
             $table->string('cardExpireDate')->nullable();
             $table->string('userType')->nullable();
+            $table->text('description')->nullable();
+            $table->text('idCard')->nullable();
             $table->string('rating')->nullable();
             $table->string('status')->default(0);
             $table->rememberToken();
