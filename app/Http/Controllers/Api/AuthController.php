@@ -53,7 +53,7 @@ class AuthController extends Controller
                     $imageName = rand() . time() . '.' . $request->image->extension();
 
                     $request->image->move(public_path('Profile_Images'), $imageName);
-                    // $imageName=asset('Profile_Images').'/'.$imageName;
+                    $imageName=asset('Profile_Images').'/'.$imageName;
 
                 } else {
                     return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Image should be file'], 422);
@@ -66,7 +66,7 @@ class AuthController extends Controller
                 if ($request->hasFile('coverPhoto')) {
                     $coverName = rand() . time() . '.' . $request->coverPhoto->extension();
                     $request->coverPhoto->move(public_path('coverPhoto'), $coverName);
-                    // $imageName=asset('coverPhoto').'/'.$imageName;
+                    $coverName=asset('coverPhoto').'/'.$coverName;
 
                 } else {
                     return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Image should be file'], 422);
@@ -79,6 +79,8 @@ class AuthController extends Controller
                 if ($request->hasFile('idCardFront')) {
                     $idFrontName = rand() . time() . '.' . $request->idCardFront->extension();
                     $request->idCardFront->move(public_path('idCard'), $idFrontName);
+                    $idFrontName=url('idCard') . '/' . $idFrontName;
+
 
                 } else {
                     return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Image should be file'], 422);
@@ -91,7 +93,7 @@ class AuthController extends Controller
                 if ($request->hasFile('idCardBack')) {
                     $idBackName = rand() . time() . '.' . $request->idCardBack->extension();
                     $request->idCardBack->move(public_path('idCard'), $idBackName);
-
+                    $idBackName=url('idCard') . '/' . $idBackName;
                 } else {
                     return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Image should be file'], 422);
                 }
@@ -127,7 +129,7 @@ class AuthController extends Controller
             $success['token'] = $user->createToken('MyApp')->plainTextToken;
             $success['email'] = $user->email;
             $user = User::where('email', $request->email)->first();
-            $user['image'] = url('Profile_Images') . '/' . $user['image'];
+            // $user['image'] = url('Profile_Images') . '/' . $user['image'];
             $user['idCard'] = json_decode($user['idCard'],true);
             // foreach($user['idCard'] as $idCard){
             //     $idCard['front']=url('idCard') . '/' . $idCard['front'];
@@ -139,8 +141,8 @@ class AuthController extends Controller
             if (isset($request->image)) {
                 if ($request->hasFile('image')) {
                     $imageName = rand() . time() . '.' . $request->image->extension();
-
                     $request->image->move(public_path('Profile_Images'), $imageName);
+                    $imageName=asset('Profile_Images').'/'.$imageName;
                 } else {
                     return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Image should be file'], 422);
                 }
@@ -149,7 +151,6 @@ class AuthController extends Controller
             }
             $data = [
                 'firstName' => $request->firstName,
-                // 'userName' => $request->userName,
                 'email' => $request->email,
                 'phoneNumber' => $request->phoneNumber,
                 'userType' => 'Guest',
@@ -160,8 +161,8 @@ class AuthController extends Controller
             $success['token'] = $user->createToken('MyApp')->plainTextToken;
             $success['email'] = $user->email;
             $user = User::where('email', $request->email)->first();
-            $user['image'] = url('Profile_Images') . '/' . $user['image'];
-            $user['coverPhoto'] = url('coverPhoto') . '/' . $user['coverPhoto'];
+            // $user['image'] = url('Profile_Images') . '/' . $user['image'];
+            // $user['coverPhoto'] = url('coverPhoto') . '/' . $user['coverPhoto'];
             $user['idCard'] = json_decode($user['idCard'],true);
             // foreach($user['idCard'] as $idCard){
             //     $idCard=url('idCard') . '/' . $idCard;
