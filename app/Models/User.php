@@ -35,6 +35,8 @@ class User extends Authenticatable
         'userType',
         'status',
         'rating',
+        'description',
+        'idCard',
     ];
 
     /**

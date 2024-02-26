@@ -128,7 +128,11 @@ class AuthController extends Controller
             $success['email'] = $user->email;
             $user = User::where('email', $request->email)->first();
             $user['image'] = url('Profile_Images') . '/' . $user['image'];
-
+            $user['idCard'] = json_decode($user['idCard'],true);
+            // foreach($user['idCard'] as $idCard){
+            //     $idCard['front']=url('idCard') . '/' . $idCard['front'];
+            //     $idCard['back']=url('idCard') . '/' . $idCard['back'];
+            // }
             return response(['status' => 'success', 'code' => 200, 'user' => $user, 'data' => $success, 'message' => 'User registered successfully as driver'], 200);
         }
         if ($request->userType == "Guest") {
@@ -158,6 +162,11 @@ class AuthController extends Controller
             $user = User::where('email', $request->email)->first();
             $user['image'] = url('Profile_Images') . '/' . $user['image'];
             $user['coverPhoto'] = url('coverPhoto') . '/' . $user['coverPhoto'];
+            $user['idCard'] = json_decode($user['idCard'],true);
+            // foreach($user['idCard'] as $idCard){
+            //     $idCard=url('idCard') . '/' . $idCard;
+            // }
+
             return response(['status' => 'success', 'code' => 200, 'user' => $user, 'data' => $success, 'message' => 'User registered successfully as grage successfully'], 200);
         }
     }
