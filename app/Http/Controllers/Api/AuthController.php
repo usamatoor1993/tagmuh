@@ -267,4 +267,5 @@ class AuthController extends Controller
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'id not set'], 403);
         }
     }
+  
 }

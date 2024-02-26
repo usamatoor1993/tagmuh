@@ -27,3 +27,8 @@ Route::post('/reviewCompany', 'App\Http\Controllers\Api\GuestController@reviewCo
 Route::get('/getService', 'App\Http\Controllers\Api\GuestController@getService')->middleware('auth:sanctum');
 
 
+Route::post('/updateProfile', 'App\Http\Controllers\Api\ProfileController@updateProfile')->middleware('auth:sanctum');
+Route::post('/report', 'App\Http\Controllers\Api\ProfileController@report')->middleware('auth:sanctum');
+Route::get('/getReports', 'App\Http\Controllers\Api\ProfileController@getReports')->middleware('auth:sanctum');
+
+
