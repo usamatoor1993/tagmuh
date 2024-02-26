@@ -119,7 +119,7 @@ class ProfileController extends Controller
     public function report(Request $request){
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|numeric|exists:users,id',
-            'message' => 'required|numeric',
+            'message' => 'required',
      
         ]);
         if ($validator->fails()) {
