@@ -37,6 +37,8 @@ class User extends Authenticatable
         'rating',
         'description',
         'idCard',
+        'BLicense',
+        'BModel',
     ];
 
     /**

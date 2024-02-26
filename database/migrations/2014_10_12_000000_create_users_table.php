@@ -31,6 +31,8 @@ return new class extends Migration
             $table->string('userType')->nullable();
             $table->text('description')->nullable();
             $table->text('idCard')->nullable();
+            $table->text('BLicense')->nullable();
+            $table->text('BModel')->nullable();
             $table->string('rating')->nullable();
             $table->string('status')->default(0);
             $table->rememberToken();
