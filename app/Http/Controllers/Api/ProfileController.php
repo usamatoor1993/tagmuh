@@ -110,7 +110,7 @@ class ProfileController extends Controller
 
             User::where('id',$user_id)->update($data);
             $user= User::where('id',$user_id)->first();
-            return response(['status' => 'success', 'code' => 200,'data'=>$user, 'message' => 'Profile updated successfully'], 200);
+            return response(['status' => 'success', 'code' => 200,'user'=>$user, 'message' => 'Profile updated successfully'], 200);
         }
         else{
             return response(['status' => 'unsuccessful', 'code' => 403, 'message' => 'there should be params in body to access this end-point'], 403);
