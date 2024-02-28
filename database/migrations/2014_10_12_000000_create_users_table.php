@@ -34,7 +34,9 @@ return new class extends Migration
             $table->text('BLicense')->nullable();
             $table->text('BModel')->nullable();
             $table->string('rating')->nullable();
+            $table->text('timings')->nullable(); 
             $table->string('status')->default(0);
+            $table->string('categoryVerified')->default(0);
             $table->rememberToken();
             $table->timestamps();
         });

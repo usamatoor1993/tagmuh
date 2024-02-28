@@ -39,7 +39,9 @@ class User extends Authenticatable
         'idCard',
         'BLicense',
         'BModel',
+        'timings',
         'deleteUser',
+        'categoryVerified'
     ];
 
     /**

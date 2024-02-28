@@ -96,6 +96,7 @@ class ProfileController extends Controller
                 'phoneNumber' => $request->phoneNumber ? $request->phoneNumber  : $getUser['phoneNumber'] ,
                 'location' =>  $request->location ? $request->location  : $getUser['location'] ,
                 'BLocation' => $request->BLocation ? $request->BLocation  : $getUser['location'],
+                'password'=>$request->password ? bcrypt($request->password) :$getUser['password'],
                 // 'category' => $request->category,
                 // 'cardIssueDate' => $request->cardIssueDate,
                 // 'cardExpireDate' => $request->cardExpireDate,
@@ -106,6 +107,7 @@ class ProfileController extends Controller
                 'coverPhoto' => $request->coverPhoto ? $coverName : $getUser['coverPhoto'],
                 'BModel' =>  $request->BModel ?  $request->BModel : $getUser['BModel'],
                 'BLicense' =>$request->BLicense ? $licenseName : $getUser['BLicense'],
+                'timings'=>$request->timings ? $request->timings :$getUser['timings'],
             ];
 
             User::where('id',$user_id)->update($data);

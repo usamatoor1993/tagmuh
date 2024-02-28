@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\User;
+use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
@@ -112,7 +114,22 @@ class AuthController extends Controller
                 'front' => $idFrontName,
                 'back' => $idBackName,
             ];
+            $categoryVerified=1;
             $idCard = json_encode($idCard, true);
+            if(!is_numeric($request->category)){
+                $checkCategory=Service::where('name',$request->category)->first();
+                if($checkCategory){
+                    $category=$checkCategory->id;
+                  
+                }else{
+                    $category=Service::create(['name'=>$request->category]);
+                    $category=$category->id;
+                    $categoryVerified=0;
+                }
+            }else{
+                $category=$request->category;
+            }
+          
             $data = [
                 'firstName' => $request->firstName,
                 'lastName' => $request->lastName,
@@ -122,7 +139,7 @@ class AuthController extends Controller
                 'phoneNumber' => $request->phoneNumber,
                 'location' => $request->location,
                 'BLocation' => $request->BLocation,
-                'category' => $request->category,
+                'category' => $category,
                 'cardIssueDate' => $request->cardIssueDate,
                 'cardExpireDate' => $request->cardExpireDate,
                 'description' => $request->description,
@@ -132,10 +149,17 @@ class AuthController extends Controller
                 'coverPhoto' =>  $coverName,
                 'BModel' =>  $request->BModel,
                 'BLicense' =>  $licenseName,
+                'categoryVerified'=>$categoryVerified,
+                'timings'=>$request->timings,
             ];
 
             $data['password'] = bcrypt($request->password);
             $user = User::create($data);
+            if(!is_numeric($request->category)){
+                Service::where('id',$category)->update([
+                    'user_id'=>$user->id,
+                ]);
+            }
             $success['token'] = $user->createToken('MyApp')->plainTextToken;
             $success['email'] = $user->email;
             $user = User::where('email', $request->email)->first();
