@@ -283,6 +283,9 @@ class AuthController extends Controller
             if ($check == 1) {
                 $user = User::where('id', $id)->first();
                 if ($user) {
+                    if($user['idCard']!=null){
+                        $user['idCard'] = json_decode($user['idCard'], true);
+                        }
                     return response(['status' => 'success', 'code' => 200, 'user' => $user, 'message' => 'User details'], 200);
                 } else {
                     return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'User not registered'], 403);
