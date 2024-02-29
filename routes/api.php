@@ -31,5 +31,6 @@ Route::post('/updateProfile', 'App\Http\Controllers\Api\ProfileController@update
 Route::post('/report', 'App\Http\Controllers\Api\ProfileController@report')->middleware('auth:sanctum');
 Route::get('/getReports', 'App\Http\Controllers\Api\ProfileController@getReports')->middleware('auth:sanctum');
 Route::post('/deleteUser', 'App\Http\Controllers\Api\GuestController@deleteUser')->middleware('auth:sanctum');
+Route::post('/getVerifiedCompany', 'App\Http\Controllers\Api\ActivityController@getVerifiedCompany')->middleware('auth:sanctum');
 
 

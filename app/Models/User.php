@@ -41,7 +41,8 @@ class User extends Authenticatable
         'BModel',
         'timings',
         'deleteUser',
-        'categoryVerified'
+        'categoryVerified',
+        'isVerified',
     ];
 
     /**
