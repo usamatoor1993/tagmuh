@@ -11,5 +11,14 @@ use App\Models\Report;
 
 class BusinessController extends Controller
 {
-    //
+    public function createParentAd(Request $request){
+        $validator = Validator::make($request->all(), [
+            'companyId' => 'required',
+            'comment' => 'required',
+            'stars' => 'required|numeric|min:1|max:5',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
+        }
+    }
 }
