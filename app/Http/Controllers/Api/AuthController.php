@@ -227,6 +227,9 @@ class AuthController extends Controller
             $success['token'] =  $user->createToken('MyApp')->plainTextToken;
             $success['name'] =  $user->name;
             $success['email'] =  $user->email;
+            if($user['idCard']!=null){
+            $user['idCard'] = json_decode($user['idCard'], true);
+            }
             return response(['status' => 'success', 'code' => 200, 'user' => $user, 'data' => $success, 'message' => 'User logged in successfully'], 200);
         } else {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Wrong email or password'], 403);
