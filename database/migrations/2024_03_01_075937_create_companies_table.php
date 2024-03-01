@@ -18,6 +18,14 @@ return new class extends Migration
             $table->string('email')->unique()->nullable();
             $table->text('address')->nullable();
             $table->text('store_hours')->nullable();
+            $table->text('category')->nullable();
+            $table->text('reels')->nullable();
+            $table->text('webLink')->nullable();
+            $table->text('profilePhoto')->nullable();
+            $table->text('coverPhoto')->nullable();
+            $table->text('isVerified')->default(0);
+            $table->text('likes')->nullable();
+            $table->text('dislikes')->nullable();
             $table->timestamps();
         });
     }

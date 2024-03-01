@@ -3,34 +3,185 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Company;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class ActivityController extends Controller
 {
+    public function addCompany(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            // 'userId' => 'required|numeric|exists:users,id',
+            'email' => 'required|unique:companies,email',
+            'address' => 'required',
+            'store_hours' => 'required',
+            'category' => 'required',
+            'reel' => 'required',
+            'webLink' => 'required',
+            'image' => 'required',
+            'coverPhoto' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        if (isset($request->image)) {
+            if ($request->hasFile('image')) {
+                $imageName = rand() . time() . '.' . $request->image->extension();
+
+                $request->image->move(public_path('Profile_Images'), $imageName);
+                $imageName = asset('Profile_Images') . '/' . $imageName;
+            } else {
+                return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Image should be file'], 422);
+            }
+        } else {
+            $imageName = null;
+        }
+
+        if (isset($request->coverPhoto)) {
+            if ($request->hasFile('coverPhoto')) {
+                $coverName = rand() . time() . '.' . $request->coverPhoto->extension();
+                $request->coverPhoto->move(public_path('coverPhoto'), $coverName);
+                $coverName = asset('coverPhoto') . '/' . $coverName;
+            } else {
+                return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Cover should be file'], 422);
+            }
+        } else {
+            $coverName = null;
+        }
+        if (isset($request->reel)) {
+            if ($request->hasFile('reel')) {
+                $reelName = rand() . time() . '.' . $request->coverPhoto->extension();
+                $request->reel->move(public_path('coverPhoto'), $reelName);
+                $reelName = asset('reels') . '/' . $reelName;
+            } else {
+                return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Reel should be file'], 422);
+            }
+        } else {
+            $reelName = null;
+        }
+        $data = [
+            'user_id' => auth()->user()->id,
+            'name' => $request->name,
+            'email' => $request->email,
+            'address' => $request->adress,
+            'store_hours' => $request->store_hours,
+            'category' => $request->category,
+            'reels' => $reelName,
+            'webLink' => $request->webLink,
+            'profilePhoto' => $imageName,
+            'coverPhoto' => $coverName,
+        ];
+        $company = Company::create($data);
+        if (isset($company)) {
+            return response(['status' => 'success', 'code' => 200, 'company' => $company, 'message' => 'Add Company Successfully'], 200);
+        } else {
+            return response(['status' => 'error', 'code' => 403, 'company' => null, 'data' => null, 'message' => 'Add Company Failed']);
+        }
+    }
+
+    public function updateCompany(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|numeric|exists:companies,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        $getCompany = Company::where('id', $request->id)->first();
+        if (isset($request->image)) {
+            if ($request->hasFile('image')) {
+                $imageName = rand() . time() . '.' . $request->image->extension();
+
+                $request->image->move(public_path('Profile_Images'), $imageName);
+                $imageName = asset('Profile_Images') . '/' . $imageName;
+            } else {
+                return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Image should be file'], 422);
+            }
+        } else {
+            $imageName = null;
+        }
+
+        if (isset($request->coverPhoto)) {
+            if ($request->hasFile('coverPhoto')) {
+                $coverName = rand() . time() . '.' . $request->coverPhoto->extension();
+                $request->coverPhoto->move(public_path('coverPhoto'), $coverName);
+                $coverName = asset('coverPhoto') . '/' . $coverName;
+            } else {
+                return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Cover should be file'], 422);
+            }
+        } else {
+            $coverName = null;
+        }
+        if (isset($request->reel)) {
+            if ($request->hasFile('reel')) {
+                $reelName = rand() . time() . '.' . $request->reel->extension();
+                $request->reel->move(public_path('reel'), $reelName);
+                $reelName = asset('reels') . '/' . $reelName;
+            } else {
+                return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Reel should be file'], 422);
+            }
+        } else {
+            $reelName = null;
+        }
+        $data = [
+            'name' => $request->name ? $request->name  : $getCompany['name'],
+            'email' => $request->email ? $request->email  : $getCompany['email'],
+            'address' => $request->adress ? $request->adress  : $getCompany['address'],
+            'store_hours' => $request->store_hours ? $request->store_hours  : $getCompany['store_hours'],
+            'category' => $request->category ? $request->category  : $getCompany['category'],
+            'reels' =>  $request->reels ? $reelName  : $getCompany['reels'],
+            'webLink' => $request->webLink ? $request->webLink  : $getCompany['webLink'],
+            'profilePhoto' =>  $request->profilePhoto ? $imageName  : $getCompany['profilePhoto'],
+            'coverPhoto' => $request->coverPhoto ? $coverName : $getCompany['coverPhoto'],
+
+        ];
+        $company = Company::where('id', $request->id)->update($data);
+        if ($company == 1) {
+            return response(['status' => 'success', 'code' => 200,  'message' => 'Update Company Successfully'], 200);
+        } else {
+            return response(['status' => 'error', 'code' => 403, 'company' => null, 'data' => null, 'message' => 'Update Company Failed']);
+        }
+    }
+
+    public function deleteCompany(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|numeric|exists:companies,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        $company = Company::where('id', $request->id)->delete();
+        if ($company == 1) {
+            return response(['status' => 'success', 'code' => 200,  'message' => 'Delete Company Successfully'], 200);
+        } else {
+            return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Delete Company Failed']);
+        }
+    }
     public function getVerifiedCompany()
     {
-        $user = User::where(['isVerified'=> 1,'userType'=>'Company'])->get();
+        $user = Company::where(['isVerified' => 1])->get();
         if ($user->count() > 0) {
-            foreach ($user as  $users) {
-                $users['idCard'] = json_decode($users['idCard'], true);
-            }
-            return response(['status' => 'success', 'code' => 200, 'user' => $user, 'message' => 'Get User Successfully'], 200);
+            // foreach ($user as  $users) {
+            //     $users['idCard'] = json_decode($users['idCard'], true);
+            // }
+            return response(['status' => 'success', 'code' => 200, 'user' => $user, 'message' => 'Get Company Successfully'], 200);
         } else {
-            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Get User Failed']);
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Get Company Failed']);
         }
     }
     public function getCompanies()
     {
-        $user = User::where(['userType'=>'Company'])->get();
+        $user = Company::where(['userType' => 'Company'])->get();
         if ($user->count() > 0) {
-            foreach ($user as  $users) {
-                $users['idCard'] = json_decode($users['idCard'], true);
-            }
-            return response(['status' => 'success', 'code' => 200, 'user' => $user, 'message' => 'Get User Successfully'], 200);
+            // foreach ($user as  $users) {
+            //     $users['idCard'] = json_decode($users['idCard'], true);
+            // }
+            return response(['status' => 'success', 'code' => 200, 'user' => $user, 'message' => 'Get Company Successfully'], 200);
         } else {
-            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Get User Failed']);
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Get Company Failed']);
         }
     }
 

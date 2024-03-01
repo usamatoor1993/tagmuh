@@ -28,7 +28,7 @@ class AuthController extends Controller
         if ($checkNumber) {
             return response(['status' => 'error', 'code' => 403, 'message' => 'phone number already exists'], 403);
         }
-        if ($request->userType == "Company") {
+        if ($request->userType == "Business") {
             $validator = Validator::make($request->all(), [
                 'firstName' => 'required',
                 'lastName' => 'required',
@@ -144,7 +144,7 @@ class AuthController extends Controller
                 'cardExpireDate' => $request->cardExpireDate,
                 'description' => $request->description,
                 'idCard' => $idCard,
-                'userType' => 'Company',
+                'userType' => 'Business',
                 'image' =>   $imageName,
                 'coverPhoto' =>  $coverName,
                 'BModel' =>  $request->BModel,

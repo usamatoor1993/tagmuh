@@ -37,5 +37,8 @@ Route::post('/likes', 'App\Http\Controllers\Api\ActivityController@likes')->midd
 Route::post('/dislikes', 'App\Http\Controllers\Api\ActivityController@dislikes')->middleware('auth:sanctum');
 Route::post('/unlike', 'App\Http\Controllers\Api\ActivityController@unlike')->middleware('auth:sanctum');
 Route::post('/removeDislike', 'App\Http\Controllers\Api\ActivityController@removeDislike')->middleware('auth:sanctum');
+Route::post('/addCompany', 'App\Http\Controllers\Api\ActivityController@addCompany')->middleware('auth:sanctum');
+Route::post('/updateCompany', 'App\Http\Controllers\Api\ActivityController@updateCompany')->middleware('auth:sanctum');
+Route::post('/deleteCompany', 'App\Http\Controllers\Api\ActivityController@deleteCompany')->middleware('auth:sanctum');
 
 
