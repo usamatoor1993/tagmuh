@@ -17,7 +17,7 @@ class GuestController extends Controller
         $validator = Validator::make($request->all(), [
             'companyId' => 'required',
             'comment' => 'required',
-            'stars' => 'required|numeric|min:1|max:5',
+            // 'stars' => 'required|numeric|min:1|max:5',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
@@ -36,7 +36,7 @@ class GuestController extends Controller
                 'userId' => $user['id'],
                 'companyId' => $request->companyId,
                 'comment' => $request->comment,
-                'stars' => $request->stars,
+                'stars' => $request->stars ?  $request->stars :0,
             ]
         );
         $ratings = $checkVendor['rating'];
