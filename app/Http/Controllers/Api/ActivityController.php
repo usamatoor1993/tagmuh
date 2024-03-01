@@ -273,7 +273,6 @@ class ActivityController extends Controller
                         $user['dislikes'] = $json;
                         $count = count($json);
                     }
-
                     return response(['status' => 'success', 'code' => 200, 'data' => $user, 'dislikescount' => $count ? $count : null, 'message' => 'User'], 200);
                 } else {
                     return response(['status' => 'success', 'code' => 403, 'data' => $likes, 'message' => 'dislike not found'], 403);
