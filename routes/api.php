@@ -33,5 +33,9 @@ Route::get('/getReports', 'App\Http\Controllers\Api\ProfileController@getReports
 Route::post('/deleteUser', 'App\Http\Controllers\Api\GuestController@deleteUser')->middleware('auth:sanctum');
 Route::get('/getVerifiedCompany', 'App\Http\Controllers\Api\ActivityController@getVerifiedCompany')->middleware('auth:sanctum');
 Route::get('/getCompanies', 'App\Http\Controllers\Api\ActivityController@getCompanies')->middleware('auth:sanctum');
+Route::post('/likes', 'App\Http\Controllers\Api\ActivityController@likes')->middleware('auth:sanctum');
+Route::post('/dislikes', 'App\Http\Controllers\Api\ActivityController@dislikes')->middleware('auth:sanctum');
+Route::post('/unlike', 'App\Http\Controllers\Api\ActivityController@unlike')->middleware('auth:sanctum');
+Route::post('/removeDislike', 'App\Http\Controllers\Api\ActivityController@removeDislike')->middleware('auth:sanctum');
 
 

@@ -43,6 +43,8 @@ class User extends Authenticatable
         'deleteUser',
         'categoryVerified',
         'isVerified',
+        'likes',
+        'dislikes',
     ];
 
     /**
