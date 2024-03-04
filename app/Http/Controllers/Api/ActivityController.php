@@ -164,21 +164,15 @@ class ActivityController extends Controller
     {
         $user = Company::where(['isVerified' => 1])->get();
         if ($user->count() > 0) {
-            // foreach ($user as  $users) {
-            //     $users['idCard'] = json_decode($users['idCard'], true);
-            // }
             return response(['status' => 'success', 'code' => 200, 'user' => $user, 'message' => 'Get Company Successfully'], 200);
         } else {
-            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Get Company Failed']);
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Company Not Found']);
         }
     }
     public function getCompanies()
     {
-        $user = Company::where(['userType' => 'Company'])->get();
+        $user = Company::get();
         if ($user->count() > 0) {
-            // foreach ($user as  $users) {
-            //     $users['idCard'] = json_decode($users['idCard'], true);
-            // }
             return response(['status' => 'success', 'code' => 200, 'user' => $user, 'message' => 'Get Company Successfully'], 200);
         } else {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Get Company Failed']);
