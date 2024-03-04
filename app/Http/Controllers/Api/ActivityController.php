@@ -18,7 +18,7 @@ class ActivityController extends Controller
             'address' => 'required',
             'store_hours' => 'required',
             'category' => 'required',
-            'reel' => 'required',
+            // 'reel' => 'required',
             'webLink' => 'required',
             'image' => 'required',
             'coverPhoto' => 'required',
@@ -52,8 +52,8 @@ class ActivityController extends Controller
         }
         if (isset($request->reel)) {
             if ($request->hasFile('reel')) {
-                $reelName = rand() . time() . '.' . $request->coverPhoto->extension();
-                $request->reel->move(public_path('coverPhoto'), $reelName);
+                $reelName = rand() . time() . '.' . $request->reel->extension();
+                $request->reel->move(public_path('reels'), $reelName);
                 $reelName = asset('reels') . '/' . $reelName;
             } else {
                 return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Reel should be file'], 422);
@@ -127,8 +127,8 @@ class ActivityController extends Controller
         }
         $data = [
             'name' => $request->name ? $request->name  : $getCompany['name'],
-            'email' => $request->email ? $request->email  : $getCompany['email'],
-            'address' => $request->adress ? $request->adress  : $getCompany['address'],
+            // 'email' => $request->email ? $request->email  : $getCompany['email'],
+            'address' => $request->address ? $request->address  : $getCompany['address'],
             'store_hours' => $request->store_hours ? $request->store_hours  : $getCompany['store_hours'],
             'category' => $request->category ? $request->category  : $getCompany['category'],
             'reels' =>  $request->reels ? $reelName  : $getCompany['reels'],
