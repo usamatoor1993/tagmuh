@@ -65,7 +65,7 @@ class ActivityController extends Controller
             'user_id' => auth()->user()->id,
             'name' => $request->name,
             'email' => $request->email,
-            'address' => $request->adress,
+            'address' => $request->address,
             'store_hours' => $request->store_hours,
             'category' => $request->category,
             'reels' => $reelName,
