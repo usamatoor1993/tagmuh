@@ -43,5 +43,8 @@ Route::post('/deleteCompany', 'App\Http\Controllers\Api\ActivityController@delet
 Route::post('/addEmployee', 'App\Http\Controllers\Api\ActivityController@addEmployee')->middleware('auth:sanctum');
 Route::post('/updateEmployee', 'App\Http\Controllers\Api\ActivityController@updateEmployee')->middleware('auth:sanctum');
 Route::post('/deleteEmployee', 'App\Http\Controllers\Api\ActivityController@deleteEmployee')->middleware('auth:sanctum');
+Route::post('/addPortfolio', 'App\Http\Controllers\Api\ActivityController@addPortfolio')->middleware('auth:sanctum');
+Route::post('/updatePortfolio', 'App\Http\Controllers\Api\ActivityController@updatePortfolio')->middleware('auth:sanctum');
+Route::post('/deletePortfolio', 'App\Http\Controllers\Api\ActivityController@deletePortfolio')->middleware('auth:sanctum');
 
 

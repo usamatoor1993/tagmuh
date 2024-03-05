@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\Employee;
+use App\Models\Portfolio;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -434,7 +435,6 @@ class ActivityController extends Controller
     public function addEmployee(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            // 'userId' => 'required|numeric',
             'name' => 'required',
             'email' => 'required|email|unique:employees,email',
             'image' => 'required',
@@ -513,6 +513,90 @@ class ActivityController extends Controller
             return response(['status' => 'success', 'code' => 200, 'message' => 'Delete Employee Successfully'], 200);
         } else {
             return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Delete Employee Failed']);
+        }
+    }
+
+    public function addPortfolio(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'image' => 'required',
+            'description' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+
+        if (isset($request->image)) {
+            if ($request->hasFile('image')) {
+                $imageName = rand() . time() . '.' . $request->image->extension();
+                $request->image->move(public_path('portfolio'), $imageName);
+                $imageName = asset('portfolio') . '/' . $imageName;
+            } else {
+                return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Image should be file'], 422);
+            }
+        } else {
+            $imageName = null;
+        }
+        $data = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'image' => $imageName,
+            'userId' => auth()->user()->id,
+        ];
+        $portfolio = Portfolio::create($data);
+        if (isset($portfolio)) {
+            return response(['status' => 'success', 'code' => 200, 'data' => $portfolio, 'message' => 'Add Portfolio Successfully'], 200);
+        } else {
+            return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Add Portfolio Failed']);
+        }
+    }
+
+    public function updatePortfolio(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        $getPortfolio=Portfolio::where('id',$request->id)->first();
+        if (isset($request->image)) {
+            if ($request->hasFile('image')) {
+                $imageName = rand() . time() . '.' . $request->image->extension();
+                $request->image->move(public_path('portfolio'), $imageName);
+                $imageName = asset('portfolio') . '/' . $imageName;
+            } else {
+                return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Image should be file'], 422);
+            }
+        } else {
+            $imageName = null;
+        }
+        $data = [
+            'name' => $request->name ? $request->name  : $getPortfolio['name'],
+            'image' =>  $request->image ? $imageName  : $getPortfolio['image'],
+        ];
+        $portfolio = Portfolio::where('id',$request->id)->update($data);
+        if ($portfolio==1) {
+            return response(['status' => 'success', 'code' => 200, 'message' => 'Update Portfolio Successfully'], 200);
+        } else {
+            return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Update Portfolio Failed']);
+        }
+    }
+
+    public function deletePortfolio(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        $portfolio = Portfolio::where('id',$request->id)->delete();
+        if ($portfolio==1) {
+            return response(['status' => 'success', 'code' => 200, 'message' => 'Delete Portfolio Successfully'], 200);
+        } else {
+            return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Delete Portfolio Failed']);
         }
     }
 }
