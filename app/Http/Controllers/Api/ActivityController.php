@@ -476,7 +476,7 @@ class ActivityController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $getEmployee=Employee::where('id',$request->id)->first();
+        $getEmployee = Employee::where('id', $request->id)->first();
         if (isset($request->image)) {
             if ($request->hasFile('image')) {
                 $imageName = rand() . time() . '.' . $request->image->extension();
@@ -492,8 +492,8 @@ class ActivityController extends Controller
             'name' => $request->name ? $request->name  : $getEmployee['name'],
             'image' =>  $request->image ? $imageName  : $getEmployee['image'],
         ];
-        $employee = Employee::where('id',$request->id)->update($data);
-        if ($employee==1) {
+        $employee = Employee::where('id', $request->id)->update($data);
+        if ($employee == 1) {
             return response(['status' => 'success', 'code' => 200, 'message' => 'Update Employee Successfully'], 200);
         } else {
             return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Update Employee Failed']);
@@ -508,8 +508,8 @@ class ActivityController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $employee = Employee::where('id',$request->id)->delete();
-        if ($employee==1) {
+        $employee = Employee::where('id', $request->id)->delete();
+        if ($employee == 1) {
             return response(['status' => 'success', 'code' => 200, 'message' => 'Delete Employee Successfully'], 200);
         } else {
             return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Delete Employee Failed']);
@@ -560,7 +560,7 @@ class ActivityController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $getPortfolio=Portfolio::where('id',$request->id)->first();
+        $getPortfolio = Portfolio::where('id', $request->id)->first();
         if (isset($request->image)) {
             if ($request->hasFile('image')) {
                 $imageName = rand() . time() . '.' . $request->image->extension();
@@ -576,8 +576,8 @@ class ActivityController extends Controller
             'name' => $request->name ? $request->name  : $getPortfolio['name'],
             'image' =>  $request->image ? $imageName  : $getPortfolio['image'],
         ];
-        $portfolio = Portfolio::where('id',$request->id)->update($data);
-        if ($portfolio==1) {
+        $portfolio = Portfolio::where('id', $request->id)->update($data);
+        if ($portfolio == 1) {
             return response(['status' => 'success', 'code' => 200, 'message' => 'Update Portfolio Successfully'], 200);
         } else {
             return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Update Portfolio Failed']);
@@ -592,8 +592,8 @@ class ActivityController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $portfolio = Portfolio::where('id',$request->id)->delete();
-        if ($portfolio==1) {
+        $portfolio = Portfolio::where('id', $request->id)->delete();
+        if ($portfolio == 1) {
             return response(['status' => 'success', 'code' => 200, 'message' => 'Delete Portfolio Successfully'], 200);
         } else {
             return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Delete Portfolio Failed']);
