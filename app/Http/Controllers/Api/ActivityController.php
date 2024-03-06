@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\BankDetails;
 use App\Models\Company;
 use App\Models\Employee;
 use App\Models\Portfolio;
@@ -471,7 +472,7 @@ class ActivityController extends Controller
     public function updateEmployee(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'id' => 'required|numeric',
+            'id' => 'required|numeric|exists:employees,id',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
@@ -503,7 +504,7 @@ class ActivityController extends Controller
     public function deleteEmployee(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'id' => 'required|numeric',
+            'id' => 'required|numeric|exists:employees,id',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
@@ -555,7 +556,7 @@ class ActivityController extends Controller
     public function updatePortfolio(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'id' => 'required|numeric',
+            'id' => 'required|numeric|exists:portfolios,id',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
@@ -587,7 +588,7 @@ class ActivityController extends Controller
     public function deletePortfolio(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'id' => 'required|numeric',
+            'id' => 'required|numeric|exists:portfolios,id',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
@@ -597,6 +598,69 @@ class ActivityController extends Controller
             return response(['status' => 'success', 'code' => 200, 'message' => 'Delete Portfolio Successfully'], 200);
         } else {
             return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Delete Portfolio Failed']);
+        }
+    }
+
+    public function addBankDetail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'bankName' => 'required',
+            'accountName' => 'required',
+            'accountNumber' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        $data = [
+            'bankName' => $request->bankName,
+            'accountName' => $request->accountName,
+            'accountNumber' => $request->accountNumber,
+            'userId' => auth()->user()->id,
+        ];
+        $bank = BankDetails::create($data);
+        if (isset($bank)) {
+            return response(['status' => 'success', 'code' => 200, 'data' => $bank, 'message' => 'Add Bank Details Successfully'], 200);
+        } else {
+            return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Add Bank Details Failed']);
+        }
+    }
+
+    public function updateBankDetail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|numeric|exists:bank_details,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        $getBankDetails = BankDetails::where('id', $request->id)->first();
+       
+        $data = [
+            'bankName' => $request->bankName ? $request->bankName  : $getBankDetails['bankName'],
+            'accountName' => $request->accountName ? $request->accountName  : $getBankDetails['accountName'],
+            'accountNumber' => $request->accountNumber ? $request->accountNumber  : $getBankDetails['accountNumber'],
+        ];
+        $bank = BankDetails::where('id', $request->id)->update($data);
+        if ($bank == 1) {
+            return response(['status' => 'success', 'code' => 200, 'message' => 'Update BankDetails Successfully'], 200);
+        } else {
+            return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Update BankDetails Failed']);
+        }
+    }
+
+    public function deleteBankDetail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|numeric|exists:bank_details,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        $bank = BankDetails::where('id', $request->id)->delete();
+        if ($bank == 1) {
+            return response(['status' => 'success', 'code' => 200, 'message' => 'Delete BankDetails Successfully'], 200);
+        } else {
+            return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Delete BankDetails Failed']);
         }
     }
 }

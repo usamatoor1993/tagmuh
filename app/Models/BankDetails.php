@@ -10,9 +10,9 @@ class BankDetails extends Model
     use HasFactory;
 
     protected $fillable=[
-        'image',
-        'name',
+        'bankName',
+        'accountName',
+        'accountNumber',
         'userId',
-        'description',
     ];
 }
