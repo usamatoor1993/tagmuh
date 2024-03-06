@@ -663,4 +663,255 @@ class ActivityController extends Controller
             return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Delete BankDetails Failed']);
         }
     }
+
+    public function likesCompany(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'userId' => 'required|numeric',
+            'id' => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        $company = Company::where('id', $request->userId)->first();
+        if (!$company) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Company not found'], 403);
+        }
+        $company = Company::where('id', $request->id)->first();
+
+        if ($company) {
+            if ($company['likes'] == null) {
+
+                $newLike = array($request->userId);
+
+                $jsonLike = json_encode($newLike);
+
+                $newData = Company::where('id', $request->id)->update(['likes' => $jsonLike]);
+
+                $company = Company::where('id', $request->id)->first();
+                if (isset($company['dislikes']) && $company['dislikes'] != null) {
+                    $jsonDislike = json_decode($company['dislikes'], true);
+                    $company['dislikes'] = $jsonDislike;
+                }
+                $json = json_decode($company['likes'], true);
+                $company['likes'] = $json;
+                $count = count($json);
+                return response(['status' => 'success', 'code' => 200, 'data' => $company, 'likescount' => $count, 'message' => 'Company'], 200);
+            } else {
+
+                if ($company['dislikes'] != null) {
+                    $jsondisLike = $company['dislikes'];
+                    $dislikes = json_decode($jsondisLike);
+                    if (in_array($request->userId, $dislikes)) {
+                        $key = array_search($request->userId, $dislikes);
+                        unset($dislikes[$key]);
+                        $newdisArray = array_values($dislikes);
+                        $newdisLike = json_encode($newdisArray);
+                        Company::where('id', $request->id)->update(['dislikes' => $newdisLike]);
+                    }
+                }
+
+                $jsonLike = $company['likes'];
+                $likes = json_decode($jsonLike);
+
+                if (in_array($request->userId, $likes)) {
+
+                    return response(['status' => 'error', 'code' => 409, 'data' => null, 'message' => 'already liked'], 409);
+                }
+                array_push($likes, $request->userId);
+
+                $newlikes = json_encode($likes);
+                // print_r($newlikes);
+                // exit;
+                $newData = Company::where('id', $request->id)->update(['likes' => $newlikes]);
+                $company = Company::where('id', $request->id)->first();
+                if (isset($company['dislikes']) && $company['dislikes'] != null) {
+                    $jsonDislike = json_decode($company['dislikes'], true);
+                    $company['dislikes'] = $jsonDislike;
+                }
+                $json = json_decode($company['likes'], true);
+                $company['likes'] = $json;
+
+                $count = count($json);
+
+                // $count=count($company['likes']);
+                return response(['status' => 'success', 'code' => 200, 'data' => $company, 'likescount' => $count, 'message' => "Company"], 200);
+            }
+        } else {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Company not found'], 403);
+        }
+    }
+
+
+    public function dislikesCompany(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'userId' => 'required|numeric',
+            'id' => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        $company = Company::where('id', $request->userId)->first();
+        if (!$company) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Company not found'], 403);
+        }
+        $company = Company::where('id', $request->id)->first();
+        if ($company) {
+            if ($company['dislikes'] == null) {
+                $newLike = array($request->userId);
+
+                $jsonLike = json_encode($newLike);
+
+                $newData = Company::where('id', $request->id)->update(['dislikes' => $jsonLike]);
+                $company = Company::where('id', $request->id)->first();
+                if (isset($company['likes']) && $company['likes'] != null) {
+                    $jsonlike = json_decode($company['likes'], true);
+                    $company['likes'] = $jsonlike;
+                }
+                $json = json_decode($company['dislikes'], true);
+                $company['dislikes'] = $json;
+                $count = count($json);
+                return response(['status' => 'success', 'code' => 200, 'data' => $company, 'dislikescount' => $count, 'message' => 'Company'], 200);
+            } else {
+
+                if ($company['likes'] != null) {
+                    $jsondisLike = $company['likes'];
+                    $dislikes = json_decode($jsondisLike);
+                    if (in_array($request->userId, $dislikes)) {
+                        $key = array_search($request->userId, $dislikes);
+                        unset($dislikes[$key]);
+                        $newdisArray = array_values($dislikes);
+                        $newdisLike = json_encode($newdisArray);
+                        Company::where('id', $request->id)->update(['likes' => $newdisLike]);
+                    }
+                }
+
+
+                $jsonLike = $company['dislikes'];
+                $likes = json_decode($jsonLike);
+
+                if (in_array($request->userId, $likes)) {
+                    return response(['status' => 'error', 'code' => 409, 'data' => null, 'message' => 'already disliked'], 409);
+                }
+                array_push($likes, $request->userId);
+
+                $newlikes = json_encode($likes);
+                // print_r($newlikes);
+                // exit;
+                $newData = Company::where('id', $request->id)->update(['dislikes' => $newlikes]);
+                $company = Company::where('id', $request->id)->first();
+                if (isset($company['likes']) && $company['likes'] != null) {
+                    $jsonlike = json_decode($company['likes'], true);
+                    $company['likes'] = $jsonlike;
+                }
+                $json = json_decode($company['dislikes'], true);
+                $company['dislikes'] = $json;
+                $count = count($json);
+                return response(['status' => 'success', 'code' => 200, 'data' => $company, 'dislikescount' => $count, 'message' => 'Company'], 200);
+            }
+        } else {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Company not found'], 403);
+        }
+    }
+
+
+    public function unlikeCompany(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'userId' => 'required|numeric',
+            'id' => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        $company = Company::where('id', $request->userId)->first();
+        if (!$company) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Company not found'], 403);
+        }
+        $company = Company::where('id', $request->id)->first();
+        if ($company) {
+            if ($company['likes'] != null) {
+                $jsonLike = $company['likes'];
+                // print_r($jsonLike);
+                // exit;
+                $likes = json_decode($jsonLike);
+
+                if (in_array($request->userId, $likes)) {
+                    $key = array_search($request->userId, $likes);
+                    unset($likes[$key]);
+                    $newArray = array_values($likes);
+                    $newLike = json_encode($newArray);
+                    $newData = Company::where('id', $request->id)->update(['likes' => $newLike]);
+                    $company = Company::where('id', $request->id)->first();
+                    if (isset($company['dislikes']) && $company['dislikes'] != null) {
+                        $jsonDislike = json_decode($company['dislikes'], true);
+                        $company['dislikes'] = $jsonDislike;
+                    }
+                    if (!empty($company['likes']) && $company['likes'] != null) {
+                        $json = json_decode($company['likes'], true);
+                        $company['likes'] = $json;
+                        $count = count($json);
+                    }
+
+                    return response(['status' => 'success', 'code' => 200, 'data' => $company, 'likescount' => $count ? $count : null, 'message' => 'Company'], 200);
+                } else {
+                    return response(['status' => 'success', 'code' => 403, 'data' => $likes, 'message' => 'like not found'], 403);
+                }
+            } else {
+                return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'like not found'], 403);
+            }
+        } else {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Company not found'], 403);
+        }
+    }
+
+    public function removeDislikeCompany(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'userId' => 'required|numeric',
+            'id' => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        $company = Company::where('id', $request->userId)->first();
+        if (!$company) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Company not found'], 403);
+        }
+        $company = Company::where('id', $request->id)->first();
+        if ($company) {
+            if ($company['dislikes'] != null) {
+                $jsonLike = $company['dislikes'];
+                // print_r($jsonLike);
+                // exit;
+                $likes = json_decode($jsonLike);
+
+                if (in_array($request->userId, $likes)) {
+                    $key = array_search($request->userId, $likes);
+                    unset($likes[$key]);
+                    $newArray = array_values($likes);
+                    $newLike = json_encode($newArray);
+                    $newData = Company::where('id', $request->id)->update(['dislikes' => $newLike]);
+                    $company = Company::where('id', $request->id)->first();
+                    if (isset($company['likes']) && $company['likes'] != null) {
+                        $jsonlike = json_decode($company['likes'], true);
+                        $company['likes'] = $jsonlike;
+                    }
+                    if (!empty($company['dislikes']) && $company['dislikes'] != null) {
+                        $json = json_decode($company['dislikes'], true);
+                        $company['dislikes'] = $json;
+                        $count = count($json);
+                    }
+                    return response(['status' => 'success', 'code' => 200, 'data' => $company, 'dislikescount' => $count ? $count : null, 'message' => 'Company'], 200);
+                } else {
+                    return response(['status' => 'success', 'code' => 403, 'data' => $likes, 'message' => 'dislike not found'], 403);
+                }
+            } else {
+                return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'like not found'], 403);
+            }
+        } else {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Company not found'], 403);
+        }
+    }
 }
