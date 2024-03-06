@@ -49,6 +49,7 @@ Route::post('/deletePortfolio', 'App\Http\Controllers\Api\ActivityController@del
 Route::post('/addBankDetail', 'App\Http\Controllers\Api\ActivityController@addBankDetail')->middleware('auth:sanctum');
 Route::post('/updateBankDetail', 'App\Http\Controllers\Api\ActivityController@updateBankDetail')->middleware('auth:sanctum');
 Route::post('/deleteBankDetail', 'App\Http\Controllers\Api\ActivityController@deleteBankDetail')->middleware('auth:sanctum');
+Route::post('/getBankDetail', 'App\Http\Controllers\Api\ActivityController@getBankDetail')->middleware('auth:sanctum');
 
 Route::post('/likesCompany', 'App\Http\Controllers\Api\ActivityController@likesCompany')->middleware('auth:sanctum');
 Route::post('/dislikesCompany', 'App\Http\Controllers\Api\ActivityController@dislikesCompany')->middleware('auth:sanctum');

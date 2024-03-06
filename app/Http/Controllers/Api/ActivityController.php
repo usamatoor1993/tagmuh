@@ -174,7 +174,7 @@ class ActivityController extends Controller
     }
     public function getCompanies()
     {
-        $user = Company::get();
+        $user = Company::with('user')->get();
         if ($user->count() > 0) {
             return response(['status' => 'success', 'code' => 200, 'user' => $user, 'message' => 'Get Company Successfully'], 200);
         } else {
@@ -634,7 +634,7 @@ class ActivityController extends Controller
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
         $getBankDetails = BankDetails::where('id', $request->id)->first();
-       
+
         $data = [
             'bankName' => $request->bankName ? $request->bankName  : $getBankDetails['bankName'],
             'accountName' => $request->accountName ? $request->accountName  : $getBankDetails['accountName'],
@@ -663,7 +663,21 @@ class ActivityController extends Controller
             return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Delete BankDetails Failed']);
         }
     }
-
+    public function getBankDetail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        $bank = BankDetails::where('userId', $request->id)->first();
+        if ($bank) {
+            return response(['status' => 'success', 'code' => 200, 'data' => $bank, 'message' => 'Get BankDetails Successfully'], 200);
+        } else {
+            return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Get BankDetails Failed']);
+        }
+    }
     public function likesCompany(Request $request)
     {
         $validator = Validator::make($request->all(), [
