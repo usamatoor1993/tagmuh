@@ -687,7 +687,7 @@ class ActivityController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $company = Company::where('id', $request->userId)->first();
+        $company = Company::where('user_id', $request->userId)->first();
         if (!$company) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Company not found'], 403);
         }
@@ -839,7 +839,7 @@ class ActivityController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $company = Company::where('id', $request->userId)->first();
+        $company = Company::where('user_id', $request->userId)->first();
         if (!$company) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Company not found'], 403);
         }
