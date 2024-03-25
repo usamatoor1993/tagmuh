@@ -88,6 +88,7 @@ class ActivityController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'id' => 'required|numeric|exists:companies,id',
+            'name' => 'unique:companies,name',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
@@ -681,7 +682,7 @@ class ActivityController extends Controller
     public function likesCompany(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'userId' => 'required|numeric',
+            'userId' => 'required|numeric|exists:users,id',
             'id' => 'required|numeric',
         ]);
         if ($validator->fails()) {
@@ -760,13 +761,13 @@ class ActivityController extends Controller
     public function dislikesCompany(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'userId' => 'required|numeric',
+            'userId' => 'required|numeric|exists:users,id',
             'id' => 'required|numeric',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $company = Company::where('id', $request->userId)->first();
+        $company = Company::where('id', $request->id)->first();
         if (!$company) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Company not found'], 403);
         }
@@ -833,13 +834,13 @@ class ActivityController extends Controller
     public function unlikeCompany(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'userId' => 'required|numeric',
+            'userId' => 'required|numeric|exists:users,id',
             'id' => 'required|numeric',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $company = Company::where('user_id', $request->userId)->first();
+        $company = Company::where('id', $request->id)->first();
         if (!$company) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Company not found'], 403);
         }
@@ -889,7 +890,7 @@ class ActivityController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $company = Company::where('id', $request->userId)->first();
+        $company = Company::where('id', $request->id)->first();
         if (!$company) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Company not found'], 403);
         }
