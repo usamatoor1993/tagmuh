@@ -884,7 +884,7 @@ class ActivityController extends Controller
     public function removeDislikeCompany(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'userId' => 'required|numeric',
+            'userId' => 'required|numeric|exists:users,id',
             'id' => 'required|numeric',
         ]);
         if ($validator->fails()) {
