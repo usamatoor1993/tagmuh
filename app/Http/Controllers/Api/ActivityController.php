@@ -898,8 +898,7 @@ class ActivityController extends Controller
         if ($company) {
             if ($company['dislikes'] != null) {
                 $jsonLike = $company['dislikes'];
-                // print_r($jsonLike);
-                // exit;
+               
                 $likes = json_decode($jsonLike);
 
                 if (in_array($request->userId, $likes)) {
