@@ -567,6 +567,7 @@ class ActivityController extends Controller
             'image' => $imageName,
             'userId' => auth()->user()->id,
             'companyId' => $request->companyId,
+            'description'=>$request->description,
         ];
         $portfolio = Portfolio::create($data);
         if (isset($portfolio)) {
@@ -599,6 +600,8 @@ class ActivityController extends Controller
         $data = [
             'name' => $request->name ? $request->name  : $getPortfolio['name'],
             'image' =>  $request->image ? $imageName  : $getPortfolio['image'],
+            'description'=>$request->description ? $request->description  : $getPortfolio['description'],
+
         ];
         $portfolio = Portfolio::where('id', $request->id)->update($data);
         if ($portfolio == 1) {
