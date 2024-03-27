@@ -175,7 +175,7 @@ class ActivityController extends Controller
     }
     public function getCompanies()
     {
-        $user = Company::with('user')->get();
+        $user = Company::with('user','employee','portfolio')->get();
         if ($user->count() > 0) {
             for ($i = 0; $i < $user->count(); $i++) {
                 if (!empty($user[$i]['likes'])) {
@@ -457,6 +457,7 @@ class ActivityController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:employees,email',
+            'companyId' => 'required|numeric|exists:companies,id',
             'image' => 'required',
         ]);
         if ($validator->fails()) {
@@ -479,6 +480,7 @@ class ActivityController extends Controller
             'email' => $request->email,
             'image' => $imageName,
             'userId' => auth()->user()->id,
+            'companyId' => $request->companyId,
         ];
         $employee = Employee::create($data);
         if (isset($employee)) {
@@ -541,6 +543,7 @@ class ActivityController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'image' => 'required',
+            'companyId' => 'required|numeric|exists:companies,id',
             'description' => 'required',
         ]);
         if ($validator->fails()) {
@@ -563,6 +566,7 @@ class ActivityController extends Controller
             'email' => $request->email,
             'image' => $imageName,
             'userId' => auth()->user()->id,
+            'companyId' => $request->companyId,
         ];
         $portfolio = Portfolio::create($data);
         if (isset($portfolio)) {

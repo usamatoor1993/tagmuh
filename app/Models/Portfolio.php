@@ -13,6 +13,7 @@ class Portfolio extends Model
         'image',
         'name',
         'userId',
+        'companyId',
         'description',
     ];
 }

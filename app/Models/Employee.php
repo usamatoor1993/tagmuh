@@ -14,5 +14,6 @@ class Employee extends Model
         'name',
         'email',
         'userId',
+        'companyId',
     ];
 }
