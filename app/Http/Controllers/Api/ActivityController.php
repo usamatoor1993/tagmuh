@@ -177,7 +177,25 @@ class ActivityController extends Controller
     {
         $user = Company::with('user')->get();
         if ($user->count() > 0) {
-            return response(['status' => 'success', 'code' => 200, 'user' => $user, 'message' => 'Get Company Successfully'], 200);
+            for ($i = 0; $i < $user->count(); $i++) {
+                if (!empty($user[$i]['likes'])) {
+                    $json = json_decode($user[$i]['likes'], true);
+                    $user[$i]['likes'] = $json;
+                    $user[$i]['likesCount'] = count($json);
+                } else {
+                    $user[$i]['likes'] = [];
+                    $user[$i]['likesCount'] = 0;
+                }
+                if (!empty($user[$i]['dislikes'])) {
+                    $json = json_decode($user[$i]['dislikes'], true);
+                    $user[$i]['dislikes'] = $json;
+                    $user[$i]['dislikesCount'] = count($json);
+                } else {
+                    $user[$i]['dislikes'] = [];
+                    $user[$i]['dislikesCount'] = 0;
+                }
+            }
+            return response(['status' => 'success', 'code' => 200, 'data' => $user, 'message' => 'Get Company Successfully'], 200);
         } else {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Get Company Failed']);
         }
@@ -898,7 +916,7 @@ class ActivityController extends Controller
         if ($company) {
             if ($company['dislikes'] != null) {
                 $jsonLike = $company['dislikes'];
-               
+
                 $likes = json_decode($jsonLike);
 
                 if (in_array($request->userId, $likes)) {
