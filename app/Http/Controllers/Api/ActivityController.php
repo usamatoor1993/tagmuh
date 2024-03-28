@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\BankDetails;
 use App\Models\Company;
+use App\Models\CompanyAd;
 use App\Models\Employee;
 use App\Models\Portfolio;
 use App\Models\User;
@@ -951,6 +952,56 @@ class ActivityController extends Controller
             }
         } else {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Company not found'], 403);
+        }
+    }
+
+    public function addCompanyAd(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'companyId' => 'required|numeric|exists:companies,id',
+            'acService' => 'required',
+            'image' => 'required',
+            'businessName' => 'required',
+            'businessWebsite' => 'required',
+            'businessLocation' => 'required',
+            'businessPhoneNumber' => 'required',
+            'businessEmail' => 'required',
+            'businessDescription' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        if (isset($request->image)) {
+            for ($i = 0; $i < count($request->image); $i++) {
+                if ($request->hasFile('image')) {
+                    $imageName = rand() . time() . '.' . $request->image[$i]->extension();
+                    $request->image[$i]->move(public_path('companyAd'), $imageName);
+                    $imageName = asset('companyAd') . '/' . $imageName;
+
+                    $getimageName[$i] = $imageName;
+                }
+            }
+            $imageName = json_encode($getimageName);
+        } else {
+            $imageName = null;
+        }
+        $data = [
+            'acService' => $request->acService,
+            'images' => $imageName,
+            'businessName' => $request->businessName,
+            'businessWebsite' => $request->businessWebsite,
+            'businessLocation' => $request->businessLocation,
+            'businessPhoneNumber' => $request->businessPhoneNumber,
+            'businessEmail' => $request->businessEmail,
+            'businessDescription' => $request->businessDescription,
+            'companyId' => $request->companyId,
+            'userId' => auth()->user()->id,
+        ];
+        $companyAd = CompanyAd::create($data);
+        if (isset($companyAd)) {
+            return response(['status' => 'success', 'code' => 200, 'data' => $companyAd, 'message' => 'Add company Ad Successfully'], 200);
+        } else {
+            return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Add company Ad Failed'], 403);
         }
     }
 }

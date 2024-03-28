@@ -56,5 +56,7 @@ Route::post('/dislikesCompany', 'App\Http\Controllers\Api\ActivityController@dis
 Route::post('/unlikeCompany', 'App\Http\Controllers\Api\ActivityController@unlikeCompany')->middleware('auth:sanctum');
 Route::post('/removeDislikeCompany', 'App\Http\Controllers\Api\ActivityController@removeDislikeCompany')->middleware('auth:sanctum');
 
+Route::post('/addCompanyAd', 'App\Http\Controllers\Api\ActivityController@addCompanyAd')->middleware('auth:sanctum');
+
 
 
