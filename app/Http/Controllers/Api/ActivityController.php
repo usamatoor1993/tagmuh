@@ -175,7 +175,7 @@ class ActivityController extends Controller
     }
     public function getCompanies()
     {
-        $user = Company::with('user','employee','portfolio')->get();
+        $user = Company::with('user', 'employee', 'portfolio')->get();
         if ($user->count() > 0) {
             for ($i = 0; $i < $user->count(); $i++) {
                 if (!empty($user[$i]['likes'])) {
@@ -567,7 +567,7 @@ class ActivityController extends Controller
             'image' => $imageName,
             'userId' => auth()->user()->id,
             'companyId' => $request->companyId,
-            'description'=>$request->description,
+            'description' => $request->description,
         ];
         $portfolio = Portfolio::create($data);
         if (isset($portfolio)) {
@@ -600,7 +600,7 @@ class ActivityController extends Controller
         $data = [
             'name' => $request->name ? $request->name  : $getPortfolio['name'],
             'image' =>  $request->image ? $imageName  : $getPortfolio['image'],
-            'description'=>$request->description ? $request->description  : $getPortfolio['description'],
+            'description' => $request->description ? $request->description  : $getPortfolio['description'],
 
         ];
         $portfolio = Portfolio::where('id', $request->id)->update($data);
