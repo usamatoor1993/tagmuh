@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class CompanyAd extends Model
 {
     use HasFactory;
-    protected $fillable=[
+    protected $fillable = [
         'acService',
         'images',
         'businessName',
@@ -21,4 +21,9 @@ class CompanyAd extends Model
         'userId',
         'status',
     ];
+
+    public function subAd()
+    {
+        return $this->hasMany(CompanySubAd::class, 'companyAdId');
+    }
 }

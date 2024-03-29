@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BankDetails;
 use App\Models\Company;
 use App\Models\CompanyAd;
+use App\Models\CompanySubAd;
 use App\Models\Employee;
 use App\Models\Portfolio;
 use App\Models\User;
@@ -999,6 +1000,7 @@ class ActivityController extends Controller
         ];
         $companyAd = CompanyAd::create($data);
         if (isset($companyAd)) {
+            $companyAd['images'] = json_decode($companyAd['images'], true);
             return response(['status' => 'success', 'code' => 200, 'data' => $companyAd, 'message' => 'Add Company Ad Successfully'], 200);
         } else {
             return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Add Company Ad Failed'], 403);
@@ -1063,13 +1065,121 @@ class ActivityController extends Controller
             return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Delete Company Ad Failed'], 403);
         }
     }
-    public function getCompanyAd(Request $request)
+    public function getCompanyAd()
     {
-        $companyAd = CompanyAd::get();
+        $companyAd = CompanyAd::with('subAd')->get();
         if ($companyAd->count() > 0) {
+            for ($i = 0; $i < count($companyAd); $i++) {
+                $companyAd[$i]['images'] = json_decode($companyAd[$i]['images'], true);
+
+                for ($j = 0; $j < count($companyAd[$i]['subAd']); $j++) {
+                    $companyAd[$i]['subAd'][$j]['images'] = json_decode($companyAd[$i]['subAd'][$j]['images'], true);
+                }
+            }
             return response(['status' => 'success', 'code' => 200, 'data' => $companyAd, 'message' => 'Get Company Ad Successfully'], 200);
         } else {
             return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Get Company Ad Failed'], 403);
+        }
+    }
+
+    public function addSubAd(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'companyId' => 'required|numeric|exists:companies,id',
+            'productName' => 'required',
+            'image' => 'required',
+            'totalProduct' => 'required',
+            'description' => 'required',
+            'companyAdId' => 'required|numeric|exists:company_ads,id',
+
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        if (isset($request->image)) {
+            for ($i = 0; $i < count($request->image); $i++) {
+                if ($request->hasFile('image')) {
+                    $imageName = rand() . time() . '.' . $request->image[$i]->extension();
+                    $request->image[$i]->move(public_path('companySubAds'), $imageName);
+                    $imageName = asset('companySubAds') . '/' . $imageName;
+                    $getimageName[$i] = $imageName;
+                }
+            }
+            $imageName = json_encode($getimageName);
+        } else {
+            $imageName = null;
+        }
+        $data = [
+            'images' => $imageName,
+            'productName' => $request->productName,
+            'totalProduct' => $request->totalProduct,
+            'description' => $request->description,
+            'companyId' => $request->companyId,
+            'companyAdId' => $request->companyAdId,
+            'userId' => auth()->user()->id,
+        ];
+        $subAd = CompanySubAd::create($data);
+        if (isset($subAd)) {
+            $subAd['images'] = json_decode($subAd['images'], true);
+            return response(['status' => 'success', 'code' => 200, 'data' => $subAd, 'message' => 'Add Sub Ad Successfully'], 200);
+        } else {
+            return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Add Sub Ad Failed'], 403);
+        }
+    }
+
+    public function updateSubAd(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|numeric|exists:company_sub_ads,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        if (!empty($request->image)) {
+            if (isset($request->image)) {
+                for ($i = 0; $i < count($request->image); $i++) {
+                    if ($request->hasFile('image')) {
+                        $imageName = rand() . time() . '.' . $request->image[$i]->extension();
+                        $request->image[$i]->move(public_path('companySubAds'), $imageName);
+                        $imageName = asset('companySubAds') . '/' . $imageName;
+                        $getimageName[$i] = $imageName;
+                    }
+                }
+                $imageName = json_encode($getimageName);
+            } else {
+                $imageName = null;
+            }
+        }
+        $comSubAd = CompanySubAd::where('id', $request->id)->first();
+
+        $data = [
+            'productName' => $request->productName ? $request->productName  : $comSubAd['productName'],
+            'images' => $request->image ? $imageName : $comSubAd['images'],
+            'totalProduct' => $request->totalProduct ? $request->totalProduct  : $comSubAd['totalProduct'],
+            'description' => $request->description ? $request->description  : $comSubAd['description'],
+        ];
+        $companySubAd = CompanySubAd::where('id', $request->id)->update($data);
+        if ($companySubAd == 1) {
+            return response(['status' => 'success', 'code' => 200, 'message' => 'Update Company Sub Ad Successfully'], 200);
+        } else {
+            return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Update Company Sub Ad Failed'], 403);
+        }
+    }
+
+
+    public function deleteCompanySubAd(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|numeric|exists:company_sub_ads,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        $companySubAd = CompanySubAd::where('id', $request->id)->delete();
+        if ($companySubAd == 1) {
+            return response(['status' => 'success', 'code' => 200, 'message' => 'Delete Company Sub Ad Successfully'], 200);
+        } else {
+            return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Delete Company Sub Ad Failed'], 403);
         }
     }
 }

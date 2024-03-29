@@ -60,6 +60,7 @@ Route::post('/addCompanyAd', 'App\Http\Controllers\Api\ActivityController@addCom
 Route::post('/updateCompanyAd', 'App\Http\Controllers\Api\ActivityController@updateCompanyAd')->middleware('auth:sanctum');
 Route::post('/deleteCompanyAd', 'App\Http\Controllers\Api\ActivityController@deleteCompanyAd')->middleware('auth:sanctum');
 Route::get('/getCompanyAd', 'App\Http\Controllers\Api\ActivityController@getCompanyAd')->middleware('auth:sanctum');
+Route::post('/addSubAd', 'App\Http\Controllers\Api\ActivityController@addSubAd')->middleware('auth:sanctum');
 
 
 

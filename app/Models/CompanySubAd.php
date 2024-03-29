@@ -9,7 +9,7 @@ class CompanySubAd extends Model
 {
     use HasFactory;
 
-    protected $fillale = [
+    protected $fillable = [
         'images',
         'productName',
         'totalProduct',
