@@ -999,9 +999,77 @@ class ActivityController extends Controller
         ];
         $companyAd = CompanyAd::create($data);
         if (isset($companyAd)) {
-            return response(['status' => 'success', 'code' => 200, 'data' => $companyAd, 'message' => 'Add company Ad Successfully'], 200);
+            return response(['status' => 'success', 'code' => 200, 'data' => $companyAd, 'message' => 'Add Company Ad Successfully'], 200);
         } else {
-            return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Add company Ad Failed'], 403);
+            return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Add Company Ad Failed'], 403);
+        }
+    }
+
+    public function updateCompanyAd(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|numeric|exists:companies,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        if (!empty($request->image)) {
+            if (isset($request->image)) {
+                for ($i = 0; $i < count($request->image); $i++) {
+                    if ($request->hasFile('image')) {
+                        $imageName = rand() . time() . '.' . $request->image[$i]->extension();
+                        $request->image[$i]->move(public_path('companyAd'), $imageName);
+                        $imageName = asset('companyAd') . '/' . $imageName;
+                        $getimageName[$i] = $imageName;
+                    }
+                }
+                $imageName = json_encode($getimageName);
+            } else {
+                $imageName = null;
+            }
+        }
+        $comAd = CompanyAd::where('id', $request->id)->first();
+
+        $data = [
+            'acService' => $request->acService ? $request->acService  : $comAd['acService'],
+            'images' => $request->image ? $imageName : $comAd['images'],
+            'businessName' => $request->businessName ? $request->businessName  : $comAd['businessName'],
+            'businessWebsite' => $request->businessWebsite ? $request->businessWebsite  : $comAd['businessWebsite'],
+            'businessLocation' => $request->businessLocation ? $request->businessLocation  : $comAd['businessLocation'],
+            'businessPhoneNumber' => $request->businessPhoneNumber ? $request->businessPhoneNumber  : $comAd['businessPhoneNumber'],
+            'businessEmail' => $request->businessEmail ? $request->businessEmail  : $comAd['businessEmail'],
+            'businessDescription' => $request->businessDescription ? $request->businessDescription  : $comAd['businessDescription'],
+        ];
+        $companyAd = CompanyAd::where('id', $request->id)->update($data);
+        if ($companyAd == 1) {
+            return response(['status' => 'success', 'code' => 200, 'message' => 'Update Company Ad Successfully'], 200);
+        } else {
+            return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Update Company Ad Failed'], 403);
+        }
+    }
+
+    public function deleteCompanyAd(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|numeric|exists:company_ads,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        $companyAd = CompanyAd::where('id', $request->id)->delete();
+        if ($companyAd == 1) {
+            return response(['status' => 'success', 'code' => 200, 'message' => 'Delete Company Ad Successfully'], 200);
+        } else {
+            return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Delete Company Ad Failed'], 403);
+        }
+    }
+    public function getCompanyAd(Request $request)
+    {
+        $companyAd = CompanyAd::get();
+        if ($companyAd->count() > 0) {
+            return response(['status' => 'success', 'code' => 200, 'data' => $companyAd, 'message' => 'Get Company Ad Successfully'], 200);
+        } else {
+            return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Get Company Ad Failed'], 403);
         }
     }
 }

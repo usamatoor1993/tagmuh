@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('businessDescription')->nullable();
             $table->string('companyId')->nullable();
             $table->string('userId')->nullable();
-            $table->string('status')->nullable();
+            $table->string('status')->default(0);
             $table->timestamps();
         });
     }
