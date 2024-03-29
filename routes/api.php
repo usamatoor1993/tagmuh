@@ -61,6 +61,8 @@ Route::post('/updateCompanyAd', 'App\Http\Controllers\Api\ActivityController@upd
 Route::post('/deleteCompanyAd', 'App\Http\Controllers\Api\ActivityController@deleteCompanyAd')->middleware('auth:sanctum');
 Route::get('/getCompanyAd', 'App\Http\Controllers\Api\ActivityController@getCompanyAd')->middleware('auth:sanctum');
 Route::post('/addSubAd', 'App\Http\Controllers\Api\ActivityController@addSubAd')->middleware('auth:sanctum');
+Route::post('/updateSubAd', 'App\Http\Controllers\Api\ActivityController@updateSubAd')->middleware('auth:sanctum');
+Route::post('/deleteCompanySubAd', 'App\Http\Controllers\Api\ActivityController@deleteCompanySubAd')->middleware('auth:sanctum');
 
 
 
