@@ -8,6 +8,7 @@ use App\Models\Company;
 use App\Models\CompanyAd;
 use App\Models\CompanyAdReview;
 use App\Models\CompanySubAd;
+use App\Models\CompanySubAdReview;
 use App\Models\Employee;
 use App\Models\Portfolio;
 use App\Models\User;
@@ -1206,7 +1207,7 @@ class ActivityController extends Controller
         CompanyAdReview::create(
             [
                 'userId' => $user['id'],
-                'companyAdId' => $request->compancompanyAdIdyId,
+                'companyAdId' => $request->companyAdId,
                 'comment' => $request->comment,
                 'stars' => $request->stars ?  $request->stars :0,
             ]
@@ -1224,5 +1225,48 @@ class ActivityController extends Controller
         }
 
         return response(['status' => 'success', 'code' => 200, 'message' => 'Company reviewed successfully'], 200);
+    }
+
+
+    public function CompanySubAdReview(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'companySubAdId' => 'required|exists:company_sub_ads,id',
+            // 'comment' => 'required',
+            'stars' => 'required|numeric|min:1|max:5',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
+        }
+        $checkVendor = CompanySubAd::where('id', $request->companySubAdId)->first();
+        if (!$checkVendor) {
+            return response(['status' => 'error', 'code' => 403, 'message' => 'Comoany Ad not found'], 403);
+        }
+        $user = auth()->user();
+        $checkReviews = CompanySubAdReview::where('userId', $user['id'])->where('companySubAdId', $request->companySubAdId)->get();
+        if ($checkReviews->count() > 0) {
+            return response(['status' => 'error', 'code' => 403, 'message' => 'already reviewed']);
+        }
+        CompanySubAdReview::create(
+            [
+                'userId' => $user['id'],
+                'companySubAdId' => $request->companySubAdId,
+                'comment' => $request->comment,
+                'stars' => $request->stars ?  $request->stars :0,
+            ]
+        );
+        $ratings = $checkVendor['rating'];
+        if ($ratings == 0) {
+            CompanySubAd::where('id', $request->companySubAdId)->update(['rating' => $request->stars]);
+        } else {
+            $getTotalRatings = CompanySubAdReview::where('companySubAdId', $request->companySubAdId)->get();
+            $totalRatings = $getTotalRatings->count() * 5;
+            $total = CompanySubAdReview::where('companySubAdId', $request->companySubAdId)->sum('stars');
+            $getmultiply = $total * 5;
+            $average = $getmultiply / $totalRatings;
+            CompanySubAd::where('id', $request->companySubAdId)->update(['rating' => $average]);
+        }
+
+        return response(['status' => 'success', 'code' => 200, 'message' => 'Company Sub Ad reviewed successfully'], 200);
     }
 }

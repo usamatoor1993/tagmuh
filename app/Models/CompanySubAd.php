@@ -17,6 +17,6 @@ class CompanySubAd extends Model
         'companyAdId',
         'companyId',
         'userId',
-
+        'rating',
     ];
 }

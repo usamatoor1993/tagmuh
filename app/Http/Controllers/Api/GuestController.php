@@ -37,7 +37,7 @@ class GuestController extends Controller
                 'userId' => $user['id'],
                 'companyId' => $request->companyId,
                 'comment' => $request->comment,
-                'stars' => $request->stars ?  $request->stars :0,
+                'stars' => $request->stars ?  $request->stars : 0,
             ]
         );
         $ratings = $checkVendor['rating'];
@@ -161,17 +161,16 @@ class GuestController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'userId' => 'required|numeric|exists:users,id',
-           
+
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
         }
-        $deleteUser=User::where('id',$request->userId)->update(['deleteUser'=>1]);
-        if ($deleteUser==1) {
+        $deleteUser = User::where('id', $request->userId)->update(['deleteUser' => 1]);
+        if ($deleteUser == 1) {
             return response(['status' => 'success', 'code' => 200, 'message' => 'User Deleted Successfully'], 200);
-        }else {
+        } else {
             return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'User Deleted Failed']);
-
         }
     }
 }

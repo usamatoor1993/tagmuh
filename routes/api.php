@@ -64,6 +64,7 @@ Route::post('/addSubAd', 'App\Http\Controllers\Api\ActivityController@addSubAd')
 Route::post('/updateSubAd', 'App\Http\Controllers\Api\ActivityController@updateSubAd')->middleware('auth:sanctum');
 Route::post('/deleteCompanySubAd', 'App\Http\Controllers\Api\ActivityController@deleteCompanySubAd')->middleware('auth:sanctum');
 Route::post('/CompanyAdReview', 'App\Http\Controllers\Api\ActivityController@CompanyAdReview')->middleware('auth:sanctum');
+Route::post('/CompanySubAdReview', 'App\Http\Controllers\Api\ActivityController@CompanySubAdReview')->middleware('auth:sanctum');
 
 
 
