@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BankDetails;
 use App\Models\Company;
 use App\Models\CompanyAd;
+use App\Models\CompanyAdReview;
 use App\Models\CompanySubAd;
 use App\Models\Employee;
 use App\Models\Portfolio;
@@ -1181,5 +1182,47 @@ class ActivityController extends Controller
         } else {
             return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Delete Company Sub Ad Failed'], 403);
         }
+    }
+
+    public function CompanyAdReview(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'companyAdId' => 'required|exists:company_ads,id',
+            // 'comment' => 'required',
+            'stars' => 'required|numeric|min:1|max:5',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
+        }
+        $checkVendor = CompanyAd::where('id', $request->companyAdId)->first();
+        if (!$checkVendor) {
+            return response(['status' => 'error', 'code' => 403, 'message' => 'Comoany Ad not found'], 403);
+        }
+        $user = auth()->user();
+        $checkReviews = CompanyAdReview::where('userId', $user['id'])->where('companyAdId', $request->companyAdId)->get();
+        if ($checkReviews->count() > 0) {
+            return response(['status' => 'error', 'code' => 403, 'message' => 'already reviewed']);
+        }
+        CompanyAdReview::create(
+            [
+                'userId' => $user['id'],
+                'companyAdId' => $request->compancompanyAdIdyId,
+                'comment' => $request->comment,
+                'stars' => $request->stars ?  $request->stars :0,
+            ]
+        );
+        $ratings = $checkVendor['rating'];
+        if ($ratings == 0) {
+            CompanyAd::where('id', $request->companyAdId)->update(['rating' => $request->stars]);
+        } else {
+            $getTotalRatings = CompanyAdReview::where('companyAdId', $request->companyAdId)->get();
+            $totalRatings = $getTotalRatings->count() * 5;
+            $total = CompanyAdReview::where('companyAdId', $request->companyAdId)->sum('stars');
+            $getmultiply = $total * 5;
+            $average = $getmultiply / $totalRatings;
+            CompanyAdReview::where('id', $request->companyAdId)->update(['rating' => $average]);
+        }
+
+        return response(['status' => 'success', 'code' => 200, 'message' => 'Company reviewed successfully'], 200);
     }
 }

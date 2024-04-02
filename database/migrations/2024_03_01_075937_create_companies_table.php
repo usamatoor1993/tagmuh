@@ -26,6 +26,8 @@ return new class extends Migration
             $table->text('isVerified')->default(0);
             $table->text('likes')->nullable();
             $table->text('dislikes')->nullable();
+            $table->string('rating')->default(0);
+
             $table->timestamps();
         });
     }

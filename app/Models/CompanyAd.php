@@ -20,6 +20,7 @@ class CompanyAd extends Model
         'companyId',
         'userId',
         'status',
+        'rating',
     ];
 
     public function subAd()
