@@ -1094,6 +1094,7 @@ class ActivityController extends Controller
             'image' => 'required',
             'totalProduct' => 'required',
             'description' => 'required',
+            'price' => 'required|numeric',
             'companyAdId' => 'required|numeric|exists:company_ads,id',
 
         ]);
@@ -1120,6 +1121,7 @@ class ActivityController extends Controller
             'description' => $request->description,
             'companyId' => $request->companyId,
             'companyAdId' => $request->companyAdId,
+            'price' => $request->price,
             'userId' => auth()->user()->id,
         ];
         $subAd = CompanySubAd::create($data);
@@ -1243,7 +1245,7 @@ class ActivityController extends Controller
             $total = CompanyAdReview::where('companyAdId', $request->companyAdId)->sum('stars');
             $getmultiply = $total * 5;
             $average = $getmultiply / $totalRatings;
-            CompanyAdReview::where('id', $request->companyAdId)->update(['rating' => $average]);
+            CompanyAd::where('id', $request->companyAdId)->update(['rating' => $average]);
         }
 
         return response(['status' => 'success', 'code' => 200, 'message' => 'Company reviewed successfully'], 200);

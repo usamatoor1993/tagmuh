@@ -16,6 +16,7 @@ return new class extends Migration
             $table->text('images')->nullable();
             $table->string('productName')->nullable();
             $table->string('totalProduct')->nullable();
+            $table->bigInteger('price')->nullable();
             $table->text('description')->nullable();
             $table->string('companyAdId')->nullable();
             $table->string('companyId')->nullable();

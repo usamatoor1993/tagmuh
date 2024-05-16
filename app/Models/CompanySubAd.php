@@ -13,6 +13,7 @@ class CompanySubAd extends Model
         'images',
         'productName',
         'totalProduct',
+        'price',
         'description',
         'companyAdId',
         'companyId',
