@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\QuoteMail;
 use App\Models\BankDetails;
 use App\Models\Company;
 use App\Models\CompanyAd;
@@ -13,6 +14,7 @@ use App\Models\Employee;
 use App\Models\Portfolio;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class ActivityController extends Controller
@@ -1184,7 +1186,27 @@ class ActivityController extends Controller
             return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Delete Company Sub Ad Failed'], 403);
         }
     }
+    public function getCompanyAdDetail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|numeric|exists:company_ads,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        $companyAd = CompanyAd::where('id', $request->id)->with('subAd')->first();
+        if ($companyAd->count() > 0) {
+            $companyAd['images'] = json_decode($companyAd['images'], true);
 
+            for ($j = 0; $j < count($companyAd['subAd']); $j++) {
+                $companyAd['subAd'][$j]['images'] = json_decode($companyAd['subAd'][$j]['images'], true);
+            }
+
+            return response(['status' => 'success', 'code' => 200, 'data' => $companyAd, 'message' => 'Get Company Ad  Detail Successfully'], 200);
+        } else {
+            return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Get Company Ad Detail Failed'], 403);
+        }
+    }
     public function CompanyAdReview(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -1209,7 +1231,7 @@ class ActivityController extends Controller
                 'userId' => $user['id'],
                 'companyAdId' => $request->companyAdId,
                 'comment' => $request->comment,
-                'stars' => $request->stars ?  $request->stars :0,
+                'stars' => $request->stars ?  $request->stars : 0,
             ]
         );
         $ratings = $checkVendor['rating'];
@@ -1252,7 +1274,7 @@ class ActivityController extends Controller
                 'userId' => $user['id'],
                 'companySubAdId' => $request->companySubAdId,
                 'comment' => $request->comment,
-                'stars' => $request->stars ?  $request->stars :0,
+                'stars' => $request->stars ?  $request->stars : 0,
             ]
         );
         $ratings = $checkVendor['rating'];
@@ -1268,5 +1290,28 @@ class ActivityController extends Controller
         }
 
         return response(['status' => 'success', 'code' => 200, 'message' => 'Company Sub Ad reviewed successfully'], 200);
+    }
+
+    public function quoteMail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'time' => 'required',
+            'location' => 'required',
+            'description' => 'required',
+            'email' => 'required|email',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
+        }
+        $data = [
+            'time' => $request->time,
+            'location' => $request->location,
+            'description' => $request->description,
+            'body' => 'This is for testing email using smtp.'
+        ];
+
+        Mail::to($request->email)->send(new QuoteMail($data));
+        return response(['status' => 'success', 'code' => 200, 'message' => "Email is sent successfully."], 200);
+
     }
 }
