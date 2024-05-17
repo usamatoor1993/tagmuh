@@ -11,6 +11,7 @@ use App\Models\CompanyAdReview;
 use App\Models\CompanySubAd;
 use App\Models\CompanySubAdReview;
 use App\Models\Employee;
+use App\Models\Event;
 use App\Models\Portfolio;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -206,7 +207,38 @@ class ActivityController extends Controller
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Get Company Failed']);
         }
     }
+    public function getCompanyDetail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|numeric|exists:companies,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        $user = Company::where('id', $request->id)->with('user', 'employee', 'portfolio')->first();
+        if ($user) {
+            if (!empty($user['likes'])) {
+                $json = json_decode($user['likes'], true);
+                $user['likes'] = $json;
+                $user['likesCount'] = count($json);
+            } else {
+                $user['likes'] = [];
+                $user['likesCount'] = 0;
+            }
+            if (!empty($user['dislikes'])) {
+                $json = json_decode($user['dislikes'], true);
+                $user['dislikes'] = $json;
+                $user['dislikesCount'] = count($json);
+            } else {
+                $user['dislikes'] = [];
+                $user['dislikesCount'] = 0;
+            }
 
+            return response(['status' => 'success', 'code' => 200, 'data' => $user, 'message' => 'Get Company Detail Successfully'], 200);
+        } else {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Get Company Detail Failed']);
+        }
+    }
     public function likes(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -1314,6 +1346,124 @@ class ActivityController extends Controller
 
         Mail::to($request->email)->send(new QuoteMail($data));
         return response(['status' => 'success', 'code' => 200, 'message' => "Email is sent successfully."], 200);
+    }
 
+    public function addEvent(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'image' => 'required',
+            'description' => 'required',
+            'date' => 'required',
+            'time' => 'required',
+            'email' => 'required|email',
+            'eventBy' => 'required',
+            'ticket' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
+        }
+        if (isset($request->image)) {
+            for ($i = 0; $i < count($request->image); $i++) {
+                if ($request->hasFile('image')) {
+                    $imageName = rand() . time() . '.' . $request->image[$i]->extension();
+                    $request->image[$i]->move(public_path('events'), $imageName);
+                    $imageName = asset('events') . '/' . $imageName;
+
+                    $getimageName[$i] = $imageName;
+                }
+            }
+            $imageName = json_encode($getimageName);
+        } else {
+            $imageName = null;
+        }
+        $data = [
+            'name' => $request->name,
+            'image' => $imageName,
+            'description' => $request->description,
+            'date' => $request->date,
+            'time' => $request->time,
+            'eventBy' => $request->eventBy,
+            'email' => $request->email,
+            'ticket' => $request->ticket,
+        ];
+        $event = Event::create($data);
+        if (isset($event)) {
+            $event['image'] = json_decode($event['image'], true);
+            return response(['status' => 'success', 'code' => 200, 'data' => $event, 'message' => 'Add Event Successfully'], 200);
+        } else {
+            return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Add Event Failed'], 403);
+        }
+    }
+
+    public function updateEvent(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:events,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
+        }
+        $event = Event::where('id', $request->id)->first();
+        $event['image'] = json_decode($event['image'], true);
+
+        if (isset($request->image)) {
+            for ($i = 0; $i < count($request->image); $i++) {
+                if ($request->hasFile('image')) {
+                    $imageName = rand() . time() . '.' . $request->image[$i]->extension();
+                    $request->image[$i]->move(public_path('events'), $imageName);
+                    $imageName = asset('events') . '/' . $imageName;
+                    $getimageName[$i] = $imageName;
+                }
+            }
+            $imageName = json_encode($getimageName);
+        } else {
+            $imageName = null;
+        }
+        $data = [
+            'name' => $request->name ? $request->name : $event['name'],
+            'image' => $request->image ? $imageName : $event['image'],
+            'description' => $request->description ? $request->description : $event['description'],
+            'date' => $request->date ? $request->date : $event['date'],
+            'time' => $request->time ? $request->time : $event['time'],
+            'eventBy' => $request->eventBy ? $request->eventBy : $event['eventBy'],
+            'email' => $request->email ? $request->email : $event['email'],
+            'ticket' => $request->ticket ? $request->ticket : $event['ticket'],
+        ];
+        $event = Event::where('id', $request->id)->update($data);
+        if ($event == 1) {
+            return response(['status' => 'success', 'code' => 200, 'message' => 'Update Event Successfully'], 200);
+        } else {
+            return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Update Event Failed'], 403);
+        }
+    }
+
+    public function deleteEvent(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:events,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
+        }
+        $event = Event::where('id', $request->id)->delete();
+        if ($event == 1) {
+            return response(['status' => 'success', 'code' => 200, 'message' => 'Delete Event Successfully'], 200);
+        } else {
+            return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Delete Event Failed'], 403);
+        }
+    }
+
+    public function getAllEvents()
+    {
+        $event = Event::get();
+        if ($event->count() > 0) {
+            foreach ($event as $events) {
+                $events['image'] = json_decode($events['image'], true);
+            }
+            return response(['status' => 'success', 'code' => 200, 'data' => $event, 'message' => 'Get Event Successfully'], 200);
+        } else {
+            return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Get Event Failed'], 403);
+        }
     }
 }
