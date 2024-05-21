@@ -1359,6 +1359,7 @@ class ActivityController extends Controller
             'email' => 'required|email',
             'eventBy' => 'required',
             'ticket' => 'required',
+            'address' => 'required',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
@@ -1386,6 +1387,7 @@ class ActivityController extends Controller
             'eventBy' => $request->eventBy,
             'email' => $request->email,
             'ticket' => $request->ticket,
+            'address' => $request->address,
         ];
         $event = Event::create($data);
         if (isset($event)) {
@@ -1429,6 +1431,7 @@ class ActivityController extends Controller
             'eventBy' => $request->eventBy ? $request->eventBy : $event['eventBy'],
             'email' => $request->email ? $request->email : $event['email'],
             'ticket' => $request->ticket ? $request->ticket : $event['ticket'],
+            'address' => $request->address ? $request->address : $event['address'],
         ];
         $event = Event::where('id', $request->id)->update($data);
         if ($event == 1) {

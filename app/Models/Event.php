@@ -20,6 +20,7 @@ class Event extends Model
         'going',
         'email',
         'ticket',
+        'address',
         'status',
     ];
 }
