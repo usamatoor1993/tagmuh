@@ -17,7 +17,7 @@ class GuestController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'companyId' => 'required',
-            'comment' => 'required',
+            // 'comment' => 'required',
             // 'stars' => 'required|numeric|min:1|max:5',
         ]);
         if ($validator->fails()) {

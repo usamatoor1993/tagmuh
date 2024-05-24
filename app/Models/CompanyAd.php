@@ -27,4 +27,9 @@ class CompanyAd extends Model
     {
         return $this->hasMany(CompanySubAd::class, 'companyAdId');
     }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class,'companyId');
+    }
 }

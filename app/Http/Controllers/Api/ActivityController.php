@@ -1103,7 +1103,7 @@ class ActivityController extends Controller
     }
     public function getCompanyAd()
     {
-        $companyAd = CompanyAd::with('subAd')->get();
+        $companyAd = CompanyAd::with('subAd','company')->get();
         if ($companyAd->count() > 0) {
             for ($i = 0; $i < count($companyAd); $i++) {
                 $companyAd[$i]['images'] = json_decode($companyAd[$i]['images'], true);
