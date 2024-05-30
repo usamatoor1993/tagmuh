@@ -28,7 +28,7 @@ class AuthController extends Controller
         if ($checkNumber) {
             return response(['status' => 'error', 'code' => 403, 'message' => 'phone number already exists'], 403);
         }
-        if ($request->userType == "Company") {
+        if ($request->userType == "Business") {
             $validator = Validator::make($request->all(), [
                 'firstName' => 'required',
                 'lastName' => 'required',
@@ -144,7 +144,7 @@ class AuthController extends Controller
                 'cardExpireDate' => $request->cardExpireDate,
                 'description' => $request->description,
                 'idCard' => $idCard,
-                'userType' => 'Company',
+                'userType' => 'Business',
                 'image' =>   $imageName,
                 'coverPhoto' =>  $coverName,
                 'BModel' =>  $request->BModel,
@@ -227,6 +227,9 @@ class AuthController extends Controller
             $success['token'] =  $user->createToken('MyApp')->plainTextToken;
             $success['name'] =  $user->name;
             $success['email'] =  $user->email;
+            if($user['idCard']!=null){
+            $user['idCard'] = json_decode($user['idCard'], true);
+            }
             return response(['status' => 'success', 'code' => 200, 'user' => $user, 'data' => $success, 'message' => 'User logged in successfully'], 200);
         } else {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Wrong email or password'], 403);
@@ -280,6 +283,9 @@ class AuthController extends Controller
             if ($check == 1) {
                 $user = User::where('id', $id)->first();
                 if ($user) {
+                    if($user['idCard']!=null){
+                        $user['idCard'] = json_decode($user['idCard'], true);
+                        }
                     return response(['status' => 'success', 'code' => 200, 'user' => $user, 'message' => 'User details'], 200);
                 } else {
                     return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'User not registered'], 403);
