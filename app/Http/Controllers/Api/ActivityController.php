@@ -664,7 +664,21 @@ class ActivityController extends Controller
             return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Delete Portfolio Failed']);
         }
     }
-
+    public function getPortfolioByCompany(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|numeric|exists:companies,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        $portfolio = Portfolio::where('companyId', $request->id)->get();
+        if ($portfolio ) {
+            return response(['status' => 'success', 'code' => 200, 'message' => 'Get Portfolio Successfully'], 200);
+        } else {
+            return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Get Portfolio Failed']);
+        }
+    }
     public function addBankDetail(Request $request)
     {
         $validator = Validator::make($request->all(), [
