@@ -75,3 +75,4 @@ Route::post('/addEvent', 'App\Http\Controllers\Api\ActivityController@addEvent')
 Route::post('/updateEvent', 'App\Http\Controllers\Api\ActivityController@updateEvent')->middleware('auth:sanctum');
 Route::post('/deleteEvent', 'App\Http\Controllers\Api\ActivityController@deleteEvent')->middleware('auth:sanctum');
 Route::post('/getAllEvents', 'App\Http\Controllers\Api\ActivityController@getAllEvents')->middleware('auth:sanctum');
+Route::post('/getEventDetail', 'App\Http\Controllers\Api\ActivityController@getEventDetail')->middleware('auth:sanctum');

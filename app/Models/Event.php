@@ -21,5 +21,13 @@ class Event extends Model
         'email',
         'ticket',
         'status',
+        'location',
+        'userId',
+
+
     ];
+    public function user()
+    {
+        return $this->belongsTo(User::class,'userId');
+    }
 }

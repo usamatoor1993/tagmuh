@@ -1004,6 +1004,7 @@ class ActivityController extends Controller
             'businessPhoneNumber' => 'required',
             'businessEmail' => 'required',
             'businessDescription' => 'required',
+            'price' => 'required',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
@@ -1032,6 +1033,7 @@ class ActivityController extends Controller
             'businessEmail' => $request->businessEmail,
             'businessDescription' => $request->businessDescription,
             'companyId' => $request->companyId,
+            'price' => $request->price,
             'userId' => auth()->user()->id,
         ];
         $companyAd = CompanyAd::create($data);
@@ -1077,6 +1079,7 @@ class ActivityController extends Controller
             'businessPhoneNumber' => $request->businessPhoneNumber ? $request->businessPhoneNumber  : $comAd['businessPhoneNumber'],
             'businessEmail' => $request->businessEmail ? $request->businessEmail  : $comAd['businessEmail'],
             'businessDescription' => $request->businessDescription ? $request->businessDescription  : $comAd['businessDescription'],
+            'price' => $request->price ? $request->price  : $comAd['price'],
         ];
         $companyAd = CompanyAd::where('id', $request->id)->update($data);
         if ($companyAd == 1) {
@@ -1103,7 +1106,7 @@ class ActivityController extends Controller
     }
     public function getCompanyAd()
     {
-        $companyAd = CompanyAd::with('subAd','company')->get();
+        $companyAd = CompanyAd::with('subAd', 'company')->get();
         if ($companyAd->count() > 0) {
             for ($i = 0; $i < count($companyAd); $i++) {
                 $companyAd[$i]['images'] = json_decode($companyAd[$i]['images'], true);
@@ -1359,6 +1362,7 @@ class ActivityController extends Controller
             'email' => 'required|email',
             'eventBy' => 'required',
             'ticket' => 'required',
+            'location' => 'required',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
@@ -1386,6 +1390,8 @@ class ActivityController extends Controller
             'eventBy' => $request->eventBy,
             'email' => $request->email,
             'ticket' => $request->ticket,
+            'location' => $request->location,
+            'userId' => auth()->user()->id,
         ];
         $event = Event::create($data);
         if (isset($event)) {
@@ -1429,6 +1435,7 @@ class ActivityController extends Controller
             'eventBy' => $request->eventBy ? $request->eventBy : $event['eventBy'],
             'email' => $request->email ? $request->email : $event['email'],
             'ticket' => $request->ticket ? $request->ticket : $event['ticket'],
+            'location' => $request->location ? $request->location : $event['location'],
         ];
         $event = Event::where('id', $request->id)->update($data);
         if ($event == 1) {
@@ -1456,7 +1463,7 @@ class ActivityController extends Controller
 
     public function getAllEvents()
     {
-        $event = Event::get();
+        $event = Event::with('user')->get();
         if ($event->count() > 0) {
             foreach ($event as $events) {
                 $events['image'] = json_decode($events['image'], true);
@@ -1464,6 +1471,25 @@ class ActivityController extends Controller
             return response(['status' => 'success', 'code' => 200, 'data' => $event, 'message' => 'Get Event Successfully'], 200);
         } else {
             return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Get Event Failed'], 403);
+        }
+    }
+
+    public function getEventDetail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:events,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
+        }
+        $event = Event::where('id', $request->id)->with('user')->first();
+        if ($event) {
+
+            $event['image'] = json_decode($event['image'], true);
+
+            return response(['status' => 'success', 'code' => 200, 'data' => $event, 'message' => 'Get Event Detail Successfully'], 200);
+        } else {
+            return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Get Event Detail Failed'], 403);
         }
     }
 }

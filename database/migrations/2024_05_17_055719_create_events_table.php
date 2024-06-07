@@ -23,6 +23,8 @@ return new class extends Migration
             $table->text('going')->nullable();
             $table->string('email')->nullable();
             $table->string('ticket')->nullable();
+            $table->text('location')->nullable();
+            $table->string('userId')->nullable();
             $table->string('status')->default(0);
             $table->timestamps();
         });
