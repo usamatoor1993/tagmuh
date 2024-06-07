@@ -41,6 +41,9 @@ Route::post('/removeDislike', 'App\Http\Controllers\Api\ActivityController@remov
 Route::post('/addCompany', 'App\Http\Controllers\Api\ActivityController@addCompany')->middleware('auth:sanctum');
 Route::post('/updateCompany', 'App\Http\Controllers\Api\ActivityController@updateCompany')->middleware('auth:sanctum');
 Route::post('/deleteCompany', 'App\Http\Controllers\Api\ActivityController@deleteCompany')->middleware('auth:sanctum');
+
+Route::post('/getCompanyByServiceId', 'App\Http\Controllers\Api\ActivityController@getCompanyByServiceId')->middleware('auth:sanctum');
+
 Route::post('/addEmployee', 'App\Http\Controllers\Api\ActivityController@addEmployee')->middleware('auth:sanctum');
 Route::post('/updateEmployee', 'App\Http\Controllers\Api\ActivityController@updateEmployee')->middleware('auth:sanctum');
 Route::post('/deleteEmployee', 'App\Http\Controllers\Api\ActivityController@deleteEmployee')->middleware('auth:sanctum');
@@ -86,3 +89,6 @@ Route::post('/deleteEvent', 'App\Http\Controllers\Api\ActivityController@deleteE
 Route::post('/getAllEvents', 'App\Http\Controllers\Api\ActivityController@getAllEvents')->middleware('auth:sanctum');
 
 Route::post('/getEventDetail', 'App\Http\Controllers\Api\ActivityController@getEventDetail')->middleware('auth:sanctum');
+
+Route::post('/addReviewEvent', 'App\Http\Controllers\Api\ActivityController@addReviewEvent')->middleware('auth:sanctum');
+Route::post('/addGoingEvent', 'App\Http\Controllers\Api\ActivityController@addGoingEvent')->middleware('auth:sanctum');

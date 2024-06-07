@@ -12,6 +12,7 @@ use App\Models\CompanySubAd;
 use App\Models\CompanySubAdReview;
 use App\Models\Employee;
 use App\Models\Event;
+use App\Models\EventReview;
 use App\Models\Portfolio;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -149,7 +150,7 @@ class ActivityController extends Controller
             'profilePhoto' =>  $request->profilePhoto ? $imageName  : $getCompany['profilePhoto'],
             'coverPhoto' => $request->coverPhoto ? $coverName : $getCompany['coverPhoto'],
             'isSelected' => $request->isSelected ? $request->isSelected  : $getCompany['isSelected'],
-            
+
 
         ];
         $company = Company::where('id', $request->id)->update($data);
@@ -184,6 +185,43 @@ class ActivityController extends Controller
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Company Not Found']);
         }
     }
+
+    public function getCompanyByServiceId(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|numeric|exists:services,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        $user = Company::where('category', $request->id)->get();
+
+        if ($user->count() > 0) {
+            for ($i = 0; $i < $user->count(); $i++) {
+                if (!empty($user[$i]['likes'])) {
+                    $json = json_decode($user[$i]['likes'], true);
+                    $user[$i]['likes'] = $json;
+                    $user[$i]['likesCount'] = count($json);
+                } else {
+                    $user[$i]['likes'] = [];
+                    $user[$i]['likesCount'] = 0;
+                }
+                if (!empty($user[$i]['dislikes'])) {
+                    $json = json_decode($user[$i]['dislikes'], true);
+                    $user[$i]['dislikes'] = $json;
+                    $user[$i]['dislikesCount'] = count($json);
+                } else {
+                    $user[$i]['dislikes'] = [];
+                    $user[$i]['dislikesCount'] = 0;
+                }
+            }
+            return response(['status' => 'success', 'code' => 200, 'user' => $user, 'message' => 'Get Company Successfully'], 200);
+        } else {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Company Not Found']);
+        }
+    }
+
     public function getCompanies()
     {
         $user = Company::with('user', 'employee', 'portfolio')->get();
@@ -589,8 +627,8 @@ class ActivityController extends Controller
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
         $employee = Employee::where('companyId', $request->id)->get();
-        if ($employee) {
-            return response(['status' => 'success', 'code' => 200, 'message' => 'Get Employee Successfully'], 200);
+        if ($employee->count() > 0) {
+            return response(['status' => 'success', 'code' => 200, 'data' => $employee, 'message' => 'Get Employee Successfully'], 200);
         } else {
             return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Get Employee Failed']);
         }
@@ -693,8 +731,8 @@ class ActivityController extends Controller
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
         $portfolio = Portfolio::where('companyId', $request->id)->get();
-        if ($portfolio) {
-            return response(['status' => 'success', 'code' => 200, 'message' => 'Get Portfolio Successfully'], 200);
+        if ($portfolio->count() > 0) {
+            return response(['status' => 'success', 'code' => 200, 'data' => $portfolio, 'message' => 'Get Portfolio Successfully'], 200);
         } else {
             return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Get Portfolio Failed']);
         }
@@ -1545,6 +1583,103 @@ class ActivityController extends Controller
             return response(['status' => 'success', 'code' => 200, 'data' => $event, 'message' => 'Get Event Detail Successfully'], 200);
         } else {
             return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Get Event Detail Failed'], 403);
+        }
+    }
+
+
+    public function addReviewEvent(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'eventId' => 'required',
+            // 'comment' => 'required',
+            'stars' => 'required|numeric|min:1|max:5',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
+        }
+        $checkVendor = Event::where('id', $request->eventId)->first();
+        if (!$checkVendor) {
+            return response(['status' => 'error', 'code' => 403, 'message' => 'Event not found'], 403);
+        }
+        $user = auth()->user();
+        $checkReviews = EventReview::where('userId', $user['id'])->where('eventId', $request->eventId)->get();
+        if ($checkReviews->count() > 0) {
+            return response(['status' => 'error', 'code' => 403, 'message' => 'already reviewed']);
+        }
+        EventReview::create(
+            [
+                'userId' => $user['id'],
+                'eventId' => $request->eventId,
+                'comment' => $request->comment,
+                'stars' => $request->stars ?  $request->stars : 0,
+            ]
+        );
+        $ratings = $checkVendor['rating'];
+        if ($ratings == 0) {
+            Event::where('id', $request->eventId)->update(['rating' => $request->stars]);
+        } else {
+            $getTotalRatings = EventReview::where('eventId', $request->eventId)->get();
+            $totalRatings = $getTotalRatings->count() * 5;
+            $total = EventReview::where('eventId', $request->eventId)->sum('stars');
+            $getmultiply = $total * 5;
+            $average = $getmultiply / $totalRatings;
+            Event::where('id', $request->eventId)->update(['rating' => $average]);
+        }
+        return response(['status' => 'success', 'code' => 200, 'message' => 'Vendor reviewed successfully'], 200);
+    }
+
+    public function addGoingEvent(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'userId' => 'required|numeric|exists:users,id',
+            'id' => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+
+        $event = Event::where('id', $request->id)->first();
+
+        if ($event) {
+            if ($event['going'] == null) {
+
+                $newLike = array($request->userId);
+
+                $jsonGoing = json_encode($newLike);
+
+                $newData = Event::where('id', $request->id)->update(['going' => $jsonGoing]);
+
+                $event = Event::where('id', $request->id)->first();
+
+                $json = json_decode($event['going'], true);
+                $event['going'] = $json;
+                $count = count($json);
+                return response(['status' => 'success', 'code' => 200, 'data' => $event, 'likescount' => $count, 'message' => 'Company'], 200);
+            } else {
+
+                $jsonGoing = $event['going'];
+                $likes = json_decode($jsonGoing);
+
+                if (in_array($request->userId, $likes)) {
+
+                    return response(['status' => 'error', 'code' => 409, 'data' => null, 'message' => 'already liked'], 409);
+                }
+                array_push($likes, $request->userId);
+
+                $newlikes = json_encode($likes);
+
+                $newData = Event::where('id', $request->id)->update(['going' => $newlikes]);
+                $event = Event::where('id', $request->id)->first();
+                $json = json_decode($event['going'], true);
+                $event['image']=json_decode($event['image'], true);
+                $event['going'] = $json;
+
+                $count = count($json);
+
+                return response(['status' => 'success', 'code' => 200, 'data' => $event, 'Goingcount' => $count, 'message' => "Event"], 200);
+            }
+        } else {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Event not found'], 403);
         }
     }
 }

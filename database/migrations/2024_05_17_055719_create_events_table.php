@@ -26,6 +26,8 @@ return new class extends Migration
             $table->text('location')->nullable();
             $table->string('userId')->nullable();
             $table->string('status')->default(0);
+            $table->string('rating')->default(0);
+
             $table->timestamps();
         });
     }

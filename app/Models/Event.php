@@ -23,6 +23,7 @@ class Event extends Model
         'status',
         'location',
         'userId',
+        'rating',
 
 
     ];
