@@ -44,10 +44,15 @@ Route::post('/deleteCompany', 'App\Http\Controllers\Api\ActivityController@delet
 Route::post('/addEmployee', 'App\Http\Controllers\Api\ActivityController@addEmployee')->middleware('auth:sanctum');
 Route::post('/updateEmployee', 'App\Http\Controllers\Api\ActivityController@updateEmployee')->middleware('auth:sanctum');
 Route::post('/deleteEmployee', 'App\Http\Controllers\Api\ActivityController@deleteEmployee')->middleware('auth:sanctum');
+
+Route::post('/getEmployeeByCompanyId', 'App\Http\Controllers\Api\ActivityController@getEmployeeByCompanyId')->middleware('auth:sanctum');
+
 Route::post('/addPortfolio', 'App\Http\Controllers\Api\ActivityController@addPortfolio')->middleware('auth:sanctum');
 Route::post('/updatePortfolio', 'App\Http\Controllers\Api\ActivityController@updatePortfolio')->middleware('auth:sanctum');
 Route::post('/deletePortfolio', 'App\Http\Controllers\Api\ActivityController@deletePortfolio')->middleware('auth:sanctum');
+
 Route::post('/getPortfolioByCompany', 'App\Http\Controllers\Api\ActivityController@getPortfolioByCompany')->middleware('auth:sanctum');
+
 Route::post('/addBankDetail', 'App\Http\Controllers\Api\ActivityController@addBankDetail')->middleware('auth:sanctum');
 Route::post('/updateBankDetail', 'App\Http\Controllers\Api\ActivityController@updateBankDetail')->middleware('auth:sanctum');
 Route::post('/deleteBankDetail', 'App\Http\Controllers\Api\ActivityController@deleteBankDetail')->middleware('auth:sanctum');
@@ -65,6 +70,9 @@ Route::get('/getCompanyAd', 'App\Http\Controllers\Api\ActivityController@getComp
 Route::post('/addSubAd', 'App\Http\Controllers\Api\ActivityController@addSubAd')->middleware('auth:sanctum');
 Route::post('/updateSubAd', 'App\Http\Controllers\Api\ActivityController@updateSubAd')->middleware('auth:sanctum');
 Route::post('/deleteCompanySubAd', 'App\Http\Controllers\Api\ActivityController@deleteCompanySubAd')->middleware('auth:sanctum');
+
+Route::post('/getCompanySubAdByCompany', 'App\Http\Controllers\Api\ActivityController@getCompanySubAdByCompany')->middleware('auth:sanctum');
+
 Route::post('/CompanyAdReview', 'App\Http\Controllers\Api\ActivityController@CompanyAdReview')->middleware('auth:sanctum');
 Route::post('/CompanySubAdReview', 'App\Http\Controllers\Api\ActivityController@CompanySubAdReview')->middleware('auth:sanctum');
 
@@ -76,4 +84,5 @@ Route::post('/addEvent', 'App\Http\Controllers\Api\ActivityController@addEvent')
 Route::post('/updateEvent', 'App\Http\Controllers\Api\ActivityController@updateEvent')->middleware('auth:sanctum');
 Route::post('/deleteEvent', 'App\Http\Controllers\Api\ActivityController@deleteEvent')->middleware('auth:sanctum');
 Route::post('/getAllEvents', 'App\Http\Controllers\Api\ActivityController@getAllEvents')->middleware('auth:sanctum');
+
 Route::post('/getEventDetail', 'App\Http\Controllers\Api\ActivityController@getEventDetail')->middleware('auth:sanctum');

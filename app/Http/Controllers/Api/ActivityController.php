@@ -576,6 +576,22 @@ class ActivityController extends Controller
         }
     }
 
+    public function getEmployeeByCompanyId(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|numeric|exists:companies,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        $employee = Employee::where('companyId', $request->id)->get();
+        if ($employee) {
+            return response(['status' => 'success', 'code' => 200, 'message' => 'Get Employee Successfully'], 200);
+        } else {
+            return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Get Employee Failed']);
+        }
+    }
+
     public function addPortfolio(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -1235,6 +1251,27 @@ class ActivityController extends Controller
             return response(['status' => 'success', 'code' => 200, 'message' => 'Delete Company Sub Ad Successfully'], 200);
         } else {
             return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Delete Company Sub Ad Failed'], 403);
+        }
+    }
+
+    public function getCompanySubAdByCompany(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|numeric|exists:companies,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        $companySubAd = CompanySubAd::where('companyAdId', $request->id)->get();
+        if ($companySubAd->count() > 0) {
+
+            for ($j = 0; $j < count($companySubAd); $j++) {
+                $companySubAd[$j]['images'] = json_decode($companySubAd[$j]['images'], true);
+            }
+
+            return response(['status' => 'success', 'code' => 200, 'data' => $companySubAd, 'message' => 'Get Company Sub Ad  Detail Successfully'], 200);
+        } else {
+            return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Get Company Sub Ad Detail Failed'], 403);
         }
     }
     public function getCompanyAdDetail(Request $request)
