@@ -32,6 +32,7 @@ class ActivityController extends Controller
             'webLink' => 'required',
             'image' => 'required',
             'coverPhoto' => 'required',
+            'isSelected' => 'required',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
@@ -82,6 +83,7 @@ class ActivityController extends Controller
             'webLink' => $request->webLink,
             'profilePhoto' => $imageName,
             'coverPhoto' => $coverName,
+            'isSelected' => $request->isSelected,
         ];
         $company = Company::create($data);
         if (isset($company)) {
@@ -146,6 +148,8 @@ class ActivityController extends Controller
             'webLink' => $request->webLink ? $request->webLink  : $getCompany['webLink'],
             'profilePhoto' =>  $request->profilePhoto ? $imageName  : $getCompany['profilePhoto'],
             'coverPhoto' => $request->coverPhoto ? $coverName : $getCompany['coverPhoto'],
+            'isSelected' => $request->isSelected ? $request->isSelected  : $getCompany['isSelected'],
+            
 
         ];
         $company = Company::where('id', $request->id)->update($data);
@@ -689,7 +693,7 @@ class ActivityController extends Controller
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
         $portfolio = Portfolio::where('companyId', $request->id)->get();
-        if ($portfolio ) {
+        if ($portfolio) {
             return response(['status' => 'success', 'code' => 200, 'message' => 'Get Portfolio Successfully'], 200);
         } else {
             return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Get Portfolio Failed']);

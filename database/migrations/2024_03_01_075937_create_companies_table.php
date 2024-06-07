@@ -27,6 +27,7 @@ return new class extends Migration
             $table->text('likes')->nullable();
             $table->text('dislikes')->nullable();
             $table->string('rating')->default(0);
+            $table->string('isSelected')->default(0);
 
             $table->timestamps();
         });
