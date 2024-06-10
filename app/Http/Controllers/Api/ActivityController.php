@@ -1823,7 +1823,7 @@ class ActivityController extends Controller
 
                     return response(['status' => 'success', 'code' => 200, 'data' => $event, 'interestCount' => $count ? $count : null, 'message' => 'Event'], 200);
                 } else {
-                    return response(['status' => 'success', 'code' => 403, 'data' => $likes, 'message' => 'Interested not found'], 403);
+                    return response(['status' => 'success', 'code' => 403, 'data' => $event, 'message' => 'Interested not found'], 403);
                 }
             } else {
                 return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Interest not found'], 403);

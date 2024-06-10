@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\BookingMail;
 use App\Models\Appointment;
 use App\Models\Company;
+use App\Models\Event;
 use App\Models\Review;
 use App\Models\Service;
 use App\Models\User;
@@ -207,5 +208,26 @@ class GuestController extends Controller
 
         Mail::to($request->email)->send(new BookingMail($data));
         return response(['status' => 'success', 'code' => 200, 'message' => "Email is sent successfully."], 200);
+    }
+
+    public function dateSearchEvent(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'start_date' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
+        }
+        // $from = date('Y-m-d', strtotime($request->start_date));
+        // $to = date('Y-m-d', strtotime($request->end_date));
+
+        $from = $request->start_date;
+        $to = $request->end_date;
+        $event = Event::whereBetween('date', [$from, $to])->get();
+        if ($event ->count()>0) {
+            return response(['status' => 'success', 'code' => 200,'event', 'message' => 'Event Get Successfully'], 200);
+        } else {
+            return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Event Get Failed']);
+        }
     }
 }
