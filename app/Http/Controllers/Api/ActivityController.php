@@ -1671,7 +1671,7 @@ class ActivityController extends Controller
                 $newData = Event::where('id', $request->id)->update(['going' => $newlikes]);
                 $event = Event::where('id', $request->id)->first();
                 $json = json_decode($event['going'], true);
-                $event['image']=json_decode($event['image'], true);
+                $event['image'] = json_decode($event['image'], true);
                 $event['going'] = $json;
 
                 $count = count($json);
@@ -1713,7 +1713,9 @@ class ActivityController extends Controller
 
                     if (!empty($event['going']) && $event['going'] != null) {
                         $json = json_decode($event['going'], true);
+                        $event['image'] = json_decode($event['image'], true);
                         $event['going'] = $json;
+
                         $count = count($json);
                     }
 
@@ -1772,7 +1774,7 @@ class ActivityController extends Controller
                 $newData = Event::where('id', $request->id)->update(['interested' => $newlikes]);
                 $event = Event::where('id', $request->id)->first();
                 $json = json_decode($event['interested'], true);
-                $event['image']=json_decode($event['image'], true);
+                $event['image'] = json_decode($event['image'], true);
                 $event['interested'] = $json;
 
                 $count = count($json);
@@ -1814,6 +1816,7 @@ class ActivityController extends Controller
 
                     if (!empty($event['interested']) && $event['interested'] != null) {
                         $json = json_decode($event['interested'], true);
+                        $event['image'] = json_decode($event['image'], true);
                         $event['interested'] = $json;
                         $count = count($json);
                     }
@@ -1829,4 +1832,6 @@ class ActivityController extends Controller
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Event not found'], 403);
         }
     }
+
+   
 }

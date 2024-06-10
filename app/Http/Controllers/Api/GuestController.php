@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\BookingMail;
 use App\Models\Appointment;
 use App\Models\Company;
 use App\Models\Review;
 use App\Models\Service;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class GuestController extends Controller
@@ -172,5 +174,38 @@ class GuestController extends Controller
         } else {
             return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'User Deleted Failed']);
         }
+    }
+
+
+    public function bookingMail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'contact' => 'required',
+            'email' => 'required|email',
+            'adults' => 'required',
+            'date' => 'required',
+            'timeAvailable' => 'required',
+            'time' => 'required',
+            'platform' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
+        }
+        $data = [
+            'name' => $request->name,
+            'contact' => $request->contact,
+            'email' => $request->email,
+            'adults' => $request->adults,
+            'childern' => $request->childern,
+            'description' => $request->description,
+            'date' => $request->date,
+            'timeAvailable' => $request->timeAvailable,
+            'platform' => $request->platform,
+            'link' => $request->link,
+        ];
+
+        Mail::to($request->email)->send(new BookingMail($data));
+        return response(['status' => 'success', 'code' => 200, 'message' => "Email is sent successfully."], 200);
     }
 }

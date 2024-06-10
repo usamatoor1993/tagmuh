@@ -95,3 +95,5 @@ Route::post('/addGoingEvent', 'App\Http\Controllers\Api\ActivityController@addGo
 Route::post('/unGoingEvent', 'App\Http\Controllers\Api\ActivityController@unGoingEvent')->middleware('auth:sanctum');
 Route::post('/addInterestEvent', 'App\Http\Controllers\Api\ActivityController@addInterestEvent')->middleware('auth:sanctum');
 Route::post('/unInterestEvent', 'App\Http\Controllers\Api\ActivityController@unInterestEvent')->middleware('auth:sanctum');
+
+Route::post('/bookingMail', 'App\Http\Controllers\Api\GuestController@bookingMail');
