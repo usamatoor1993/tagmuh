@@ -1654,7 +1654,7 @@ class ActivityController extends Controller
                 $json = json_decode($event['going'], true);
                 $event['going'] = $json;
                 $count = count($json);
-                return response(['status' => 'success', 'code' => 200, 'data' => $event, 'likescount' => $count, 'message' => 'Company'], 200);
+                return response(['status' => 'success', 'code' => 200, 'data' => $event, 'likescount' => $count, 'message' => 'Event'], 200);
             } else {
 
                 $jsonGoing = $event['going'];
@@ -1662,7 +1662,7 @@ class ActivityController extends Controller
 
                 if (in_array($request->userId, $likes)) {
 
-                    return response(['status' => 'error', 'code' => 409, 'data' => null, 'message' => 'already liked'], 409);
+                    return response(['status' => 'error', 'code' => 409, 'data' => null, 'message' => 'already Going'], 409);
                 }
                 array_push($likes, $request->userId);
 
@@ -1676,7 +1676,154 @@ class ActivityController extends Controller
 
                 $count = count($json);
 
-                return response(['status' => 'success', 'code' => 200, 'data' => $event, 'Goingcount' => $count, 'message' => "Event"], 200);
+                return response(['status' => 'success', 'code' => 200, 'data' => $event, 'goingCount' => $count, 'message' => "Event"], 200);
+            }
+        } else {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Event not found'], 403);
+        }
+    }
+
+    public function unGoingEvent(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'userId' => 'required|numeric|exists:users,id',
+            'id' => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        $event = Event::where('id', $request->id)->first();
+        if (!$event) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Event not found'], 403);
+        }
+        $event = Event::where('id', $request->id)->first();
+        if ($event) {
+            if ($event['going'] != null) {
+                $jsonGoing = $event['going'];
+
+                $likes = json_decode($jsonGoing);
+
+                if (in_array($request->userId, $likes)) {
+                    $key = array_search($request->userId, $likes);
+                    unset($likes[$key]);
+                    $newArray = array_values($likes);
+                    $newLike = json_encode($newArray);
+                    $newData = Event::where('id', $request->id)->update(['going' => $newLike]);
+                    $event = Event::where('id', $request->id)->first();
+
+                    if (!empty($event['going']) && $event['going'] != null) {
+                        $json = json_decode($event['going'], true);
+                        $event['going'] = $json;
+                        $count = count($json);
+                    }
+
+                    return response(['status' => 'success', 'code' => 200, 'data' => $event, 'goingsCount' => $count ? $count : null, 'message' => 'Event'], 200);
+                } else {
+                    return response(['status' => 'success', 'code' => 403, 'data' => $likes, 'message' => 'Going not found'], 403);
+                }
+            } else {
+                return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Going not found'], 403);
+            }
+        } else {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Event not found'], 403);
+        }
+    }
+
+    public function addInterestEvent(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'userId' => 'required|numeric|exists:users,id',
+            'id' => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+
+        $event = Event::where('id', $request->id)->first();
+
+        if ($event) {
+            if ($event['interested'] == null) {
+
+                $newLike = array($request->userId);
+
+                $jsonInterest = json_encode($newLike);
+
+                $newData = Event::where('id', $request->id)->update(['interested' => $jsonInterest]);
+
+                $event = Event::where('id', $request->id)->first();
+
+                $json = json_decode($event['interested'], true);
+                $event['interested'] = $json;
+                $count = count($json);
+                return response(['status' => 'success', 'code' => 200, 'data' => $event, 'interestCount' => $count, 'message' => 'Event'], 200);
+            } else {
+
+                $jsonInterest = $event['interested'];
+                $likes = json_decode($jsonInterest);
+
+                if (in_array($request->userId, $likes)) {
+
+                    return response(['status' => 'error', 'code' => 409, 'data' => null, 'message' => 'already Interested'], 409);
+                }
+                array_push($likes, $request->userId);
+
+                $newlikes = json_encode($likes);
+
+                $newData = Event::where('id', $request->id)->update(['interested' => $newlikes]);
+                $event = Event::where('id', $request->id)->first();
+                $json = json_decode($event['interested'], true);
+                $event['image']=json_decode($event['image'], true);
+                $event['interested'] = $json;
+
+                $count = count($json);
+
+                return response(['status' => 'success', 'code' => 200, 'data' => $event, 'interestCount' => $count, 'message' => "Event"], 200);
+            }
+        } else {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Event not found'], 403);
+        }
+    }
+
+    public function unInterestEvent(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'userId' => 'required|numeric|exists:users,id',
+            'id' => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        $event = Event::where('id', $request->id)->first();
+        if (!$event) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Event not found'], 403);
+        }
+        $event = Event::where('id', $request->id)->first();
+        if ($event) {
+            if ($event['interested'] != null) {
+                $jsonInterest = $event['interested'];
+
+                $likes = json_decode($jsonInterest);
+
+                if (in_array($request->userId, $likes)) {
+                    $key = array_search($request->userId, $likes);
+                    unset($likes[$key]);
+                    $newArray = array_values($likes);
+                    $newLike = json_encode($newArray);
+                    $newData = Event::where('id', $request->id)->update(['interested' => $newLike]);
+                    $event = Event::where('id', $request->id)->first();
+
+                    if (!empty($event['interested']) && $event['interested'] != null) {
+                        $json = json_decode($event['interested'], true);
+                        $event['interested'] = $json;
+                        $count = count($json);
+                    }
+
+                    return response(['status' => 'success', 'code' => 200, 'data' => $event, 'interestCount' => $count ? $count : null, 'message' => 'Event'], 200);
+                } else {
+                    return response(['status' => 'success', 'code' => 403, 'data' => $likes, 'message' => 'Interested not found'], 403);
+                }
+            } else {
+                return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Interest not found'], 403);
             }
         } else {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Event not found'], 403);

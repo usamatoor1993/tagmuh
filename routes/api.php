@@ -92,3 +92,6 @@ Route::post('/getEventDetail', 'App\Http\Controllers\Api\ActivityController@getE
 
 Route::post('/addReviewEvent', 'App\Http\Controllers\Api\ActivityController@addReviewEvent')->middleware('auth:sanctum');
 Route::post('/addGoingEvent', 'App\Http\Controllers\Api\ActivityController@addGoingEvent')->middleware('auth:sanctum');
+Route::post('/unGoingEvent', 'App\Http\Controllers\Api\ActivityController@unGoingEvent')->middleware('auth:sanctum');
+Route::post('/addInterestEvent', 'App\Http\Controllers\Api\ActivityController@addInterestEvent')->middleware('auth:sanctum');
+Route::post('/unInterestEvent', 'App\Http\Controllers\Api\ActivityController@unInterestEvent')->middleware('auth:sanctum');
