@@ -1489,6 +1489,8 @@ class ActivityController extends Controller
         $event = Event::create($data);
         if (isset($event)) {
             $event['image'] = json_decode($event['image'], true);
+            $event['going'] = json_decode($event['going'], true);
+            $event['interested'] = json_decode($event['interested'], true);
             return response(['status' => 'success', 'code' => 200, 'data' => $event, 'message' => 'Add Event Successfully'], 200);
         } else {
             return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Add Event Failed'], 403);
@@ -1560,6 +1562,20 @@ class ActivityController extends Controller
         if ($event->count() > 0) {
             foreach ($event as $events) {
                 $events['image'] = json_decode($events['image'], true);
+                $events['going'] = json_decode($events['going'], true);
+                $events['interested'] = json_decode($events['interested'], true);
+                $going = $events['going'];
+                $interested = $events['interested'];
+                if (!empty($going)) {
+                    $events['goingCount'] = count($going);
+                } else {
+                    $events['goingCount'] = 0;
+                }
+                if (!empty($interested)) {
+                    $events['interestedCount'] = count($interested);
+                } else {
+                    $events['interestedCount'] = 0;
+                }
             }
             return response(['status' => 'success', 'code' => 200, 'data' => $event, 'message' => 'Get Event Successfully'], 200);
         } else {
@@ -1579,12 +1595,26 @@ class ActivityController extends Controller
         if ($event) {
 
             $event['image'] = json_decode($event['image'], true);
-
+            $event['going'] = json_decode($event['going'], true);
+            $event['interested'] = json_decode($event['interested'], true);
+            $going = $event['going'];
+            $interested = $event['interested'];
+            if (!empty($going)) {
+                $event['goingCount'] = count($going);
+            } else {
+                $event['goingCount'] = 0;
+            }
+            if (!empty($interested)) {
+                $event['interestedCount'] = count($interested);
+            } else {
+                $event['interestedCount'] = 0;
+            }
             return response(['status' => 'success', 'code' => 200, 'data' => $event, 'message' => 'Get Event Detail Successfully'], 200);
         } else {
             return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Get Event Detail Failed'], 403);
         }
     }
+
 
 
     public function addReviewEvent(Request $request)
@@ -1832,6 +1862,4 @@ class ActivityController extends Controller
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Event not found'], 403);
         }
     }
-
-   
 }
