@@ -1120,7 +1120,7 @@ class ActivityController extends Controller
     public function updateCompanyAd(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'id' => 'required|numeric|exists:companies,id',
+            'id' => 'required|numeric|exists:company_ads,id',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
