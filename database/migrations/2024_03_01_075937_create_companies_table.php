@@ -23,12 +23,11 @@ return new class extends Migration
             $table->text('webLink')->nullable();
             $table->text('profilePhoto')->nullable();
             $table->text('coverPhoto')->nullable();
-            $table->text('isVerified')->default(0);
+            $table->tinyInteger('isVerified')->default(0);
             $table->text('likes')->nullable();
             $table->text('dislikes')->nullable();
             $table->string('rating')->default(0);
-            $table->string('isSelected')->default(0);
-
+            $table->tinyInteger('isSelected')->default(0);
             $table->timestamps();
         });
     }
