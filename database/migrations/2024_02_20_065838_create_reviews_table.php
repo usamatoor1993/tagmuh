@@ -14,8 +14,12 @@ return new class extends Migration
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
             $table->string('stars')->default(0);
-            $table->string('companyId')->nullable();
-            $table->string('userId')->nullable();
+            // $table->string('companyId')->nullable();
+            $table->unsignedBigInteger('company_id');
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
+            // $table->string('userId')->nullable();
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->longText('comment')->nullable();
             $table->timestamps();
         });

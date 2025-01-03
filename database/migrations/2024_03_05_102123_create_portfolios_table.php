@@ -13,8 +13,12 @@ return new class extends Migration
     {
         Schema::create('portfolios', function (Blueprint $table) {
             $table->id();
-            $table->string('userId')->nullable();
-            $table->string('companyId')->nullable();
+            // $table->string('userId')->nullable();
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            // $table->string('companyId')->nullable();
+            $table->unsignedBigInteger('company_id');
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
             $table->text('image')->nullable();
             $table->string('name')->nullable();
             $table->text('description')->nullable();

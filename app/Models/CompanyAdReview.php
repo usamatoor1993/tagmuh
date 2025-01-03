@@ -12,8 +12,8 @@ class CompanyAdReview extends Model
 
     protected $fillable=[
         'stars',
-        'companyAdId',
-        'userId',
+        'company_ad_id',
+        'user_id',
         'comment',
     ];
 }

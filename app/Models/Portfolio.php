@@ -12,8 +12,8 @@ class Portfolio extends Model
     protected $fillable=[
         'image',
         'name',
-        'userId',
-        'companyId',
+        'user_id',
+        'company_id',
         'description',
     ];
 }

@@ -24,16 +24,16 @@ class ActivityController extends Controller
     public function addCompany(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            // 'userId' => 'required|numeric|exists:users,id',
+            // 'user_id' => 'required|numeric|exists:users,id',
             'email' => 'required|unique:companies,email',
             'address' => 'required',
             'store_hours' => 'required',
             'category' => 'required',
             // 'reel' => 'required',
-            'webLink' => 'required',
+            'web_link' => 'required',
             'image' => 'required',
-            'coverPhoto' => 'required',
-            'isSelected' => 'required',
+            'cover_photo' => 'required',
+            'is_selected' => 'required',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
@@ -51,11 +51,11 @@ class ActivityController extends Controller
             $imageName = null;
         }
 
-        if (isset($request->coverPhoto)) {
-            if ($request->hasFile('coverPhoto')) {
-                $coverName = rand() . time() . '.' . $request->coverPhoto->extension();
-                $request->coverPhoto->move(public_path('coverPhoto'), $coverName);
-                $coverName = asset('coverPhoto') . '/' . $coverName;
+        if (isset($request->cover_photo)) {
+            if ($request->hasFile('cover_photo')) {
+                $coverName = rand() . time() . '.' . $request->cover_photo->extension();
+                $request->cover_photo->move(public_path('cover_photo'), $coverName);
+                $coverName = asset('cover_photo') . '/' . $coverName;
             } else {
                 return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Cover should be file'], 422);
             }
@@ -81,10 +81,10 @@ class ActivityController extends Controller
             'store_hours' => $request->store_hours,
             'category' => $request->category,
             'reels' => $reelName,
-            'webLink' => $request->webLink,
-            'profilePhoto' => $imageName,
-            'coverPhoto' => $coverName,
-            'isSelected' => $request->isSelected,
+            'web_link' => $request->web_link,
+            'profile_photo' => $imageName,
+            'cover_photo' => $coverName,
+            'is_selected' => $request->is_selected,
         ];
         $company = Company::create($data);
         if (isset($company)) {
@@ -117,11 +117,11 @@ class ActivityController extends Controller
             $imageName = null;
         }
 
-        if (isset($request->coverPhoto)) {
-            if ($request->hasFile('coverPhoto')) {
-                $coverName = rand() . time() . '.' . $request->coverPhoto->extension();
-                $request->coverPhoto->move(public_path('coverPhoto'), $coverName);
-                $coverName = asset('coverPhoto') . '/' . $coverName;
+        if (isset($request->cover_photo)) {
+            if ($request->hasFile('cover_photo')) {
+                $coverName = rand() . time() . '.' . $request->cover_photo->extension();
+                $request->cover_photo->move(public_path('cover_photo'), $coverName);
+                $coverName = asset('cover_photo') . '/' . $coverName;
             } else {
                 return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Cover should be file'], 422);
             }
@@ -146,10 +146,10 @@ class ActivityController extends Controller
             'store_hours' => $request->store_hours ? $request->store_hours  : $getCompany['store_hours'],
             'category' => $request->category ? $request->category  : $getCompany['category'],
             'reels' =>  $request->reels ? $reelName  : $getCompany['reels'],
-            'webLink' => $request->webLink ? $request->webLink  : $getCompany['webLink'],
-            'profilePhoto' =>  $request->profilePhoto ? $imageName  : $getCompany['profilePhoto'],
-            'coverPhoto' => $request->coverPhoto ? $coverName : $getCompany['coverPhoto'],
-            'isSelected' => $request->isSelected ? $request->isSelected  : $getCompany['isSelected'],
+            'web_link' => $request->web_link ? $request->web_link  : $getCompany['web_link'],
+            'profile_photo' =>  $request->profile_photo ? $imageName  : $getCompany['profile_photo'],
+            'cover_photo' => $request->cover_photo ? $coverName : $getCompany['cover_photo'],
+            'is_selected' => $request->is_selected ? $request->is_selected  : $getCompany['is_selected'],
 
 
         ];
@@ -178,7 +178,7 @@ class ActivityController extends Controller
     }
     public function getVerifiedCompany()
     {
-        $user = Company::where(['isVerified' => 1])->get();
+        $user = Company::where(['is_verified' => 1])->get();
         if ($user->count() > 0) {
             return response(['status' => 'success', 'code' => 200, 'user' => $user, 'message' => 'Get Company Successfully'], 200);
         } else {
@@ -186,7 +186,7 @@ class ActivityController extends Controller
         }
     }
 
-    public function getCompanyByServiceId(Request $request)
+    public function getCompanyByservice_id(Request $request)
     {
 
         $validator = Validator::make($request->all(), [
@@ -284,13 +284,13 @@ class ActivityController extends Controller
     public function likes(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'userId' => 'required|numeric',
+            'user_id' => 'required|numeric',
             'id' => 'required|numeric',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $user = User::where('id', $request->userId)->first();
+        $user = User::where('id', $request->user_id)->first();
         if (!$user) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'user not found'], 403);
         }
@@ -299,7 +299,7 @@ class ActivityController extends Controller
         if ($user) {
             if ($user['likes'] == null) {
 
-                $newLike = array($request->userId);
+                $newLike = array($request->user_id);
 
                 $jsonLike = json_encode($newLike);
 
@@ -319,8 +319,8 @@ class ActivityController extends Controller
                 if ($user['dislikes'] != null) {
                     $jsondisLike = $user['dislikes'];
                     $dislikes = json_decode($jsondisLike);
-                    if (in_array($request->userId, $dislikes)) {
-                        $key = array_search($request->userId, $dislikes);
+                    if (in_array($request->user_id, $dislikes)) {
+                        $key = array_search($request->user_id, $dislikes);
                         unset($dislikes[$key]);
                         $newdisArray = array_values($dislikes);
                         $newdisLike = json_encode($newdisArray);
@@ -331,11 +331,11 @@ class ActivityController extends Controller
                 $jsonLike = $user['likes'];
                 $likes = json_decode($jsonLike);
 
-                if (in_array($request->userId, $likes)) {
+                if (in_array($request->user_id, $likes)) {
 
                     return response(['status' => 'error', 'code' => 409, 'data' => null, 'message' => 'already liked'], 409);
                 }
-                array_push($likes, $request->userId);
+                array_push($likes, $request->user_id);
 
                 $newlikes = json_encode($likes);
                 // print_r($newlikes);
@@ -363,20 +363,20 @@ class ActivityController extends Controller
     public function dislikes(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'userId' => 'required|numeric',
+            'user_id' => 'required|numeric',
             'id' => 'required|numeric',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $user = User::where('id', $request->userId)->first();
+        $user = User::where('id', $request->user_id)->first();
         if (!$user) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'user not found'], 403);
         }
         $user = User::where('id', $request->id)->first();
         if ($user) {
             if ($user['dislikes'] == null) {
-                $newLike = array($request->userId);
+                $newLike = array($request->user_id);
 
                 $jsonLike = json_encode($newLike);
 
@@ -395,8 +395,8 @@ class ActivityController extends Controller
                 if ($user['likes'] != null) {
                     $jsondisLike = $user['likes'];
                     $dislikes = json_decode($jsondisLike);
-                    if (in_array($request->userId, $dislikes)) {
-                        $key = array_search($request->userId, $dislikes);
+                    if (in_array($request->user_id, $dislikes)) {
+                        $key = array_search($request->user_id, $dislikes);
                         unset($dislikes[$key]);
                         $newdisArray = array_values($dislikes);
                         $newdisLike = json_encode($newdisArray);
@@ -408,10 +408,10 @@ class ActivityController extends Controller
                 $jsonLike = $user['dislikes'];
                 $likes = json_decode($jsonLike);
 
-                if (in_array($request->userId, $likes)) {
+                if (in_array($request->user_id, $likes)) {
                     return response(['status' => 'error', 'code' => 409, 'data' => null, 'message' => 'already disliked'], 409);
                 }
-                array_push($likes, $request->userId);
+                array_push($likes, $request->user_id);
 
                 $newlikes = json_encode($likes);
                 // print_r($newlikes);
@@ -436,13 +436,13 @@ class ActivityController extends Controller
     public function unlike(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'userId' => 'required|numeric',
+            'user_id' => 'required|numeric',
             'id' => 'required|numeric',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $user = User::where('id', $request->userId)->first();
+        $user = User::where('id', $request->user_id)->first();
         if (!$user) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'user not found'], 403);
         }
@@ -454,8 +454,8 @@ class ActivityController extends Controller
                 // exit;
                 $likes = json_decode($jsonLike);
 
-                if (in_array($request->userId, $likes)) {
-                    $key = array_search($request->userId, $likes);
+                if (in_array($request->user_id, $likes)) {
+                    $key = array_search($request->user_id, $likes);
                     unset($likes[$key]);
                     $newArray = array_values($likes);
                     $newLike = json_encode($newArray);
@@ -486,13 +486,13 @@ class ActivityController extends Controller
     public function removeDislike(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'userId' => 'required|numeric',
+            'user_id' => 'required|numeric',
             'id' => 'required|numeric',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $user = User::where('id', $request->userId)->first();
+        $user = User::where('id', $request->user_id)->first();
         if (!$user) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'user not found'], 403);
         }
@@ -504,8 +504,8 @@ class ActivityController extends Controller
                 // exit;
                 $likes = json_decode($jsonLike);
 
-                if (in_array($request->userId, $likes)) {
-                    $key = array_search($request->userId, $likes);
+                if (in_array($request->user_id, $likes)) {
+                    $key = array_search($request->user_id, $likes);
                     unset($likes[$key]);
                     $newArray = array_values($likes);
                     $newLike = json_encode($newArray);
@@ -537,7 +537,7 @@ class ActivityController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:employees,email',
-            'companyId' => 'required|numeric|exists:companies,id',
+            'company_id' => 'required|numeric|exists:companies,id',
             'image' => 'required',
         ]);
         if ($validator->fails()) {
@@ -559,8 +559,8 @@ class ActivityController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'image' => $imageName,
-            'userId' => auth()->user()->id,
-            'companyId' => $request->companyId,
+            'user_id' => auth()->user()->id,
+            'company_id' => $request->company_id,
         ];
         $employee = Employee::create($data);
         if (isset($employee)) {
@@ -618,7 +618,7 @@ class ActivityController extends Controller
         }
     }
 
-    public function getEmployeeByCompanyId(Request $request)
+    public function getEmployeeBycompany_id(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'id' => 'required|numeric|exists:companies,id',
@@ -626,7 +626,7 @@ class ActivityController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $employee = Employee::where('companyId', $request->id)->get();
+        $employee = Employee::where('company_id', $request->id)->get();
         if ($employee->count() > 0) {
             return response(['status' => 'success', 'code' => 200, 'data' => $employee, 'message' => 'Get Employee Successfully'], 200);
         } else {
@@ -639,7 +639,7 @@ class ActivityController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'image' => 'required',
-            'companyId' => 'required|numeric|exists:companies,id',
+            'company_id' => 'required|numeric|exists:companies,id',
             'description' => 'required',
         ]);
         if ($validator->fails()) {
@@ -661,8 +661,8 @@ class ActivityController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'image' => $imageName,
-            'userId' => auth()->user()->id,
-            'companyId' => $request->companyId,
+            'user_id' => auth()->user()->id,
+            'company_id' => $request->company_id,
             'description' => $request->description,
         ];
         $portfolio = Portfolio::create($data);
@@ -730,7 +730,7 @@ class ActivityController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $portfolio = Portfolio::where('companyId', $request->id)->get();
+        $portfolio = Portfolio::where('company_id', $request->id)->get();
         if ($portfolio->count() > 0) {
             return response(['status' => 'success', 'code' => 200, 'data' => $portfolio, 'message' => 'Get Portfolio Successfully'], 200);
         } else {
@@ -740,18 +740,18 @@ class ActivityController extends Controller
     public function addBankDetail(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'bankName' => 'required',
-            'accountName' => 'required',
-            'accountNumber' => 'required',
+            'bank_name' => 'required',
+            'account_name' => 'required',
+            'account_number' => 'required',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
         $data = [
-            'bankName' => $request->bankName,
-            'accountName' => $request->accountName,
-            'accountNumber' => $request->accountNumber,
-            'userId' => auth()->user()->id,
+            'bank_name' => $request->bank_name,
+            'account_name' => $request->account_name,
+            'account_number' => $request->account_number,
+            'user_id' => auth()->user()->id,
         ];
         $bank = BankDetails::create($data);
         if (isset($bank)) {
@@ -772,9 +772,9 @@ class ActivityController extends Controller
         $getBankDetails = BankDetails::where('id', $request->id)->first();
 
         $data = [
-            'bankName' => $request->bankName ? $request->bankName  : $getBankDetails['bankName'],
-            'accountName' => $request->accountName ? $request->accountName  : $getBankDetails['accountName'],
-            'accountNumber' => $request->accountNumber ? $request->accountNumber  : $getBankDetails['accountNumber'],
+            'bank_name' => $request->bank_name ? $request->bank_name  : $getBankDetails['bank_name'],
+            'account_name' => $request->account_name ? $request->account_name  : $getBankDetails['account_name'],
+            'account_number' => $request->account_number ? $request->account_number  : $getBankDetails['account_number'],
         ];
         $bank = BankDetails::where('id', $request->id)->update($data);
         if ($bank == 1) {
@@ -807,7 +807,7 @@ class ActivityController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $bank = BankDetails::where('userId', $request->id)->first();
+        $bank = BankDetails::where('user_id', $request->id)->first();
         if ($bank) {
             return response(['status' => 'success', 'code' => 200, 'data' => $bank, 'message' => 'Get BankDetails Successfully'], 200);
         } else {
@@ -817,13 +817,13 @@ class ActivityController extends Controller
     public function likesCompany(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'userId' => 'required|numeric|exists:users,id',
+            'user_id' => 'required|numeric|exists:users,id',
             'id' => 'required|numeric',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        // $company = Company::where('user_id', $request->userId)->first();
+        // $company = Company::where('user_id', $request->user_id)->first();
         // if (!$company) {
         //     return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Company not found'], 403);
         // }
@@ -832,7 +832,7 @@ class ActivityController extends Controller
         if ($company) {
             if ($company['likes'] == null) {
 
-                $newLike = array($request->userId);
+                $newLike = array($request->user_id);
 
                 $jsonLike = json_encode($newLike);
 
@@ -852,8 +852,8 @@ class ActivityController extends Controller
                 if ($company['dislikes'] != null) {
                     $jsondisLike = $company['dislikes'];
                     $dislikes = json_decode($jsondisLike);
-                    if (in_array($request->userId, $dislikes)) {
-                        $key = array_search($request->userId, $dislikes);
+                    if (in_array($request->user_id, $dislikes)) {
+                        $key = array_search($request->user_id, $dislikes);
                         unset($dislikes[$key]);
                         $newdisArray = array_values($dislikes);
                         $newdisLike = json_encode($newdisArray);
@@ -864,11 +864,11 @@ class ActivityController extends Controller
                 $jsonLike = $company['likes'];
                 $likes = json_decode($jsonLike);
 
-                if (in_array($request->userId, $likes)) {
+                if (in_array($request->user_id, $likes)) {
 
                     return response(['status' => 'error', 'code' => 409, 'data' => null, 'message' => 'already liked'], 409);
                 }
-                array_push($likes, $request->userId);
+                array_push($likes, $request->user_id);
 
                 $newlikes = json_encode($likes);
                 // print_r($newlikes);
@@ -896,7 +896,7 @@ class ActivityController extends Controller
     public function dislikesCompany(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'userId' => 'required|numeric|exists:users,id',
+            'user_id' => 'required|numeric|exists:users,id',
             'id' => 'required|numeric',
         ]);
         if ($validator->fails()) {
@@ -909,7 +909,7 @@ class ActivityController extends Controller
         $company = Company::where('id', $request->id)->first();
         if ($company) {
             if ($company['dislikes'] == null) {
-                $newLike = array($request->userId);
+                $newLike = array($request->user_id);
 
                 $jsonLike = json_encode($newLike);
 
@@ -928,8 +928,8 @@ class ActivityController extends Controller
                 if ($company['likes'] != null) {
                     $jsondisLike = $company['likes'];
                     $dislikes = json_decode($jsondisLike);
-                    if (in_array($request->userId, $dislikes)) {
-                        $key = array_search($request->userId, $dislikes);
+                    if (in_array($request->user_id, $dislikes)) {
+                        $key = array_search($request->user_id, $dislikes);
                         unset($dislikes[$key]);
                         $newdisArray = array_values($dislikes);
                         $newdisLike = json_encode($newdisArray);
@@ -941,10 +941,10 @@ class ActivityController extends Controller
                 $jsonLike = $company['dislikes'];
                 $likes = json_decode($jsonLike);
 
-                if (in_array($request->userId, $likes)) {
+                if (in_array($request->user_id, $likes)) {
                     return response(['status' => 'error', 'code' => 409, 'data' => null, 'message' => 'already disliked'], 409);
                 }
-                array_push($likes, $request->userId);
+                array_push($likes, $request->user_id);
 
                 $newlikes = json_encode($likes);
                 // print_r($newlikes);
@@ -969,7 +969,7 @@ class ActivityController extends Controller
     public function unlikeCompany(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'userId' => 'required|numeric|exists:users,id',
+            'user_id' => 'required|numeric|exists:users,id',
             'id' => 'required|numeric',
         ]);
         if ($validator->fails()) {
@@ -987,8 +987,8 @@ class ActivityController extends Controller
                 // exit;
                 $likes = json_decode($jsonLike);
 
-                if (in_array($request->userId, $likes)) {
-                    $key = array_search($request->userId, $likes);
+                if (in_array($request->user_id, $likes)) {
+                    $key = array_search($request->user_id, $likes);
                     unset($likes[$key]);
                     $newArray = array_values($likes);
                     $newLike = json_encode($newArray);
@@ -1019,7 +1019,7 @@ class ActivityController extends Controller
     public function removeDislikeCompany(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'userId' => 'required|numeric|exists:users,id',
+            'user_id' => 'required|numeric|exists:users,id',
             'id' => 'required|numeric',
         ]);
         if ($validator->fails()) {
@@ -1036,8 +1036,8 @@ class ActivityController extends Controller
 
                 $likes = json_decode($jsonLike);
 
-                if (in_array($request->userId, $likes)) {
-                    $key = array_search($request->userId, $likes);
+                if (in_array($request->user_id, $likes)) {
+                    $key = array_search($request->user_id, $likes);
                     unset($likes[$key]);
                     $newArray = array_values($likes);
                     $newLike = json_encode($newArray);
@@ -1067,15 +1067,15 @@ class ActivityController extends Controller
     public function addCompanyAd(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'companyId' => 'required|numeric|exists:companies,id',
-            'acService' => 'required',
+            'company_id' => 'required|numeric|exists:companies,id',
+            'ac_service' => 'required',
             'image' => 'required',
-            'businessName' => 'required',
-            'businessWebsite' => 'required',
-            'businessLocation' => 'required',
-            'businessPhoneNumber' => 'required',
-            'businessEmail' => 'required',
-            'businessDescription' => 'required',
+            'business_name' => 'required',
+            'business_website' => 'required',
+            'business_location' => 'required',
+            'business_phone_number' => 'required',
+            'business_email' => 'required',
+            'business_description' => 'required',
             'price' => 'required',
         ]);
         if ($validator->fails()) {
@@ -1096,17 +1096,17 @@ class ActivityController extends Controller
             $imageName = null;
         }
         $data = [
-            'acService' => $request->acService,
+            'ac_service' => $request->ac_service,
             'images' => $imageName,
-            'businessName' => $request->businessName,
-            'businessWebsite' => $request->businessWebsite,
-            'businessLocation' => $request->businessLocation,
-            'businessPhoneNumber' => $request->businessPhoneNumber,
-            'businessEmail' => $request->businessEmail,
-            'businessDescription' => $request->businessDescription,
-            'companyId' => $request->companyId,
+            'business_name' => $request->business_name,
+            'business_website' => $request->business_website,
+            'business_location' => $request->business_location,
+            'business_phone_number' => $request->business_phone_number,
+            'business_email' => $request->business_email,
+            'business_description' => $request->business_description,
+            'company_id' => $request->company_id,
             'price' => $request->price,
-            'userId' => auth()->user()->id,
+            'user_id' => auth()->user()->id,
         ];
         $companyAd = CompanyAd::create($data);
         if (isset($companyAd)) {
@@ -1143,14 +1143,14 @@ class ActivityController extends Controller
         $comAd = CompanyAd::where('id', $request->id)->first();
 
         $data = [
-            'acService' => $request->acService ? $request->acService  : $comAd['acService'],
+            'ac_service' => $request->ac_service ? $request->ac_service  : $comAd['ac_service'],
             'images' => $request->image ? $imageName : $comAd['images'],
-            'businessName' => $request->businessName ? $request->businessName  : $comAd['businessName'],
-            'businessWebsite' => $request->businessWebsite ? $request->businessWebsite  : $comAd['businessWebsite'],
-            'businessLocation' => $request->businessLocation ? $request->businessLocation  : $comAd['businessLocation'],
-            'businessPhoneNumber' => $request->businessPhoneNumber ? $request->businessPhoneNumber  : $comAd['businessPhoneNumber'],
-            'businessEmail' => $request->businessEmail ? $request->businessEmail  : $comAd['businessEmail'],
-            'businessDescription' => $request->businessDescription ? $request->businessDescription  : $comAd['businessDescription'],
+            'business_name' => $request->business_name ? $request->business_name  : $comAd['business_name'],
+            'business_website' => $request->business_website ? $request->business_website  : $comAd['business_website'],
+            'business_location' => $request->business_location ? $request->business_location  : $comAd['business_location'],
+            'business_phone_number' => $request->business_phone_number ? $request->business_phone_number  : $comAd['business_phone_number'],
+            'business_email' => $request->business_email ? $request->business_email  : $comAd['business_email'],
+            'business_description' => $request->business_description ? $request->business_description  : $comAd['business_description'],
             'price' => $request->price ? $request->price  : $comAd['price'],
         ];
         $companyAd = CompanyAd::where('id', $request->id)->update($data);
@@ -1196,13 +1196,13 @@ class ActivityController extends Controller
     public function addSubAd(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'companyId' => 'required|numeric|exists:companies,id',
-            'productName' => 'required',
+            'company_id' => 'required|numeric|exists:companies,id',
+            'product_name' => 'required',
             'image' => 'required',
-            'totalProduct' => 'required',
+            'total_product' => 'required',
             'description' => 'required',
             'price' => 'required|numeric',
-            'companyAdId' => 'required|numeric|exists:company_ads,id',
+            'company_ad_id' => 'required|numeric|exists:company_ads,id',
 
         ]);
         if ($validator->fails()) {
@@ -1223,13 +1223,13 @@ class ActivityController extends Controller
         }
         $data = [
             'images' => $imageName,
-            'productName' => $request->productName,
-            'totalProduct' => $request->totalProduct,
+            'product_name' => $request->product_name,
+            'total_product' => $request->total_product,
             'description' => $request->description,
-            'companyId' => $request->companyId,
-            'companyAdId' => $request->companyAdId,
+            'company_id' => $request->company_id,
+            'company_ad_id' => $request->company_ad_id,
             'price' => $request->price,
-            'userId' => auth()->user()->id,
+            'user_id' => auth()->user()->id,
         ];
         $subAd = CompanySubAd::create($data);
         if (isset($subAd)) {
@@ -1266,9 +1266,9 @@ class ActivityController extends Controller
         $comSubAd = CompanySubAd::where('id', $request->id)->first();
 
         $data = [
-            'productName' => $request->productName ? $request->productName  : $comSubAd['productName'],
+            'product_name' => $request->product_name ? $request->product_name  : $comSubAd['product_name'],
             'images' => $request->image ? $imageName : $comSubAd['images'],
-            'totalProduct' => $request->totalProduct ? $request->totalProduct  : $comSubAd['totalProduct'],
+            'total_product' => $request->total_product ? $request->total_product  : $comSubAd['total_product'],
             'description' => $request->description ? $request->description  : $comSubAd['description'],
         ];
         $companySubAd = CompanySubAd::where('id', $request->id)->update($data);
@@ -1304,7 +1304,7 @@ class ActivityController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $companySubAd = CompanySubAd::where('companyAdId', $request->id)->get();
+        $companySubAd = CompanySubAd::where('company_ad_id', $request->id)->get();
         if ($companySubAd->count() > 0) {
 
             for ($j = 0; $j < count($companySubAd); $j++) {
@@ -1340,40 +1340,40 @@ class ActivityController extends Controller
     public function CompanyAdReview(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'companyAdId' => 'required|exists:company_ads,id',
+            'company_ad_id' => 'required|exists:company_ads,id',
             // 'comment' => 'required',
             'stars' => 'required|numeric|min:1|max:5',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
         }
-        $checkVendor = CompanyAd::where('id', $request->companyAdId)->first();
+        $checkVendor = CompanyAd::where('id', $request->company_ad_id)->first();
         if (!$checkVendor) {
             return response(['status' => 'error', 'code' => 403, 'message' => 'Comoany Ad not found'], 403);
         }
         $user = auth()->user();
-        $checkReviews = CompanyAdReview::where('userId', $user['id'])->where('companyAdId', $request->companyAdId)->get();
+        $checkReviews = CompanyAdReview::where('user_id', $user['id'])->where('company_ad_id', $request->company_ad_id)->get();
         if ($checkReviews->count() > 0) {
             return response(['status' => 'error', 'code' => 403, 'message' => 'already reviewed']);
         }
         CompanyAdReview::create(
             [
-                'userId' => $user['id'],
-                'companyAdId' => $request->companyAdId,
+                'user_id' => $user['id'],
+                'company_ad_id' => $request->company_ad_id,
                 'comment' => $request->comment,
                 'stars' => $request->stars ?  $request->stars : 0,
             ]
         );
         $ratings = $checkVendor['rating'];
         if ($ratings == 0) {
-            CompanyAd::where('id', $request->companyAdId)->update(['rating' => $request->stars]);
+            CompanyAd::where('id', $request->company_ad_id)->update(['rating' => $request->stars]);
         } else {
-            $getTotalRatings = CompanyAdReview::where('companyAdId', $request->companyAdId)->get();
+            $getTotalRatings = CompanyAdReview::where('company_ad_id', $request->company_ad_id)->get();
             $totalRatings = $getTotalRatings->count() * 5;
-            $total = CompanyAdReview::where('companyAdId', $request->companyAdId)->sum('stars');
+            $total = CompanyAdReview::where('company_ad_id', $request->company_ad_id)->sum('stars');
             $getmultiply = $total * 5;
             $average = $getmultiply / $totalRatings;
-            CompanyAd::where('id', $request->companyAdId)->update(['rating' => $average]);
+            CompanyAd::where('id', $request->company_ad_id)->update(['rating' => $average]);
         }
 
         return response(['status' => 'success', 'code' => 200, 'message' => 'Company reviewed successfully'], 200);
@@ -1383,40 +1383,40 @@ class ActivityController extends Controller
     public function CompanySubAdReview(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'companySubAdId' => 'required|exists:company_sub_ads,id',
+            'company_sub_ad_id' => 'required|exists:company_sub_ads,id',
             // 'comment' => 'required',
             'stars' => 'required|numeric|min:1|max:5',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
         }
-        $checkVendor = CompanySubAd::where('id', $request->companySubAdId)->first();
+        $checkVendor = CompanySubAd::where('id', $request->company_sub_ad_id)->first();
         if (!$checkVendor) {
             return response(['status' => 'error', 'code' => 403, 'message' => 'Comoany Ad not found'], 403);
         }
         $user = auth()->user();
-        $checkReviews = CompanySubAdReview::where('userId', $user['id'])->where('companySubAdId', $request->companySubAdId)->get();
+        $checkReviews = CompanySubAdReview::where('user_id', $user['id'])->where('company_sub_ad_id', $request->company_sub_ad_id)->get();
         if ($checkReviews->count() > 0) {
             return response(['status' => 'error', 'code' => 403, 'message' => 'already reviewed']);
         }
         CompanySubAdReview::create(
             [
-                'userId' => $user['id'],
-                'companySubAdId' => $request->companySubAdId,
+                'user_id' => $user['id'],
+                'company_sub_ad_id' => $request->company_sub_ad_id,
                 'comment' => $request->comment,
                 'stars' => $request->stars ?  $request->stars : 0,
             ]
         );
         $ratings = $checkVendor['rating'];
         if ($ratings == 0) {
-            CompanySubAd::where('id', $request->companySubAdId)->update(['rating' => $request->stars]);
+            CompanySubAd::where('id', $request->company_sub_ad_id)->update(['rating' => $request->stars]);
         } else {
-            $getTotalRatings = CompanySubAdReview::where('companySubAdId', $request->companySubAdId)->get();
+            $getTotalRatings = CompanySubAdReview::where('company_sub_ad_id', $request->company_sub_ad_id)->get();
             $totalRatings = $getTotalRatings->count() * 5;
-            $total = CompanySubAdReview::where('companySubAdId', $request->companySubAdId)->sum('stars');
+            $total = CompanySubAdReview::where('company_sub_ad_id', $request->company_sub_ad_id)->sum('stars');
             $getmultiply = $total * 5;
             $average = $getmultiply / $totalRatings;
-            CompanySubAd::where('id', $request->companySubAdId)->update(['rating' => $average]);
+            CompanySubAd::where('id', $request->company_sub_ad_id)->update(['rating' => $average]);
         }
 
         return response(['status' => 'success', 'code' => 200, 'message' => 'Company Sub Ad reviewed successfully'], 200);
@@ -1453,7 +1453,7 @@ class ActivityController extends Controller
             'date' => 'required',
             'time' => 'required',
             'email' => 'required|email',
-            'eventBy' => 'required',
+            'event_by' => 'required',
             'ticket' => 'required',
             'location' => 'required',
         ]);
@@ -1480,11 +1480,11 @@ class ActivityController extends Controller
             'description' => $request->description,
             'date' => $request->date,
             'time' => $request->time,
-            'eventBy' => $request->eventBy,
+            'event_by' => $request->event_by,
             'email' => $request->email,
             'ticket' => $request->ticket,
             'location' => $request->location,
-            'userId' => auth()->user()->id,
+            'user_id' => auth()->user()->id,
         ];
         $event = Event::create($data);
         if (isset($event)) {
@@ -1527,7 +1527,7 @@ class ActivityController extends Controller
             'description' => $request->description ? $request->description : $event['description'],
             'date' => $request->date ? $request->date : $event['date'],
             'time' => $request->time ? $request->time : $event['time'],
-            'eventBy' => $request->eventBy ? $request->eventBy : $event['eventBy'],
+            'event_by' => $request->event_by ? $request->event_by : $event['event_by'],
             'email' => $request->email ? $request->email : $event['email'],
             'ticket' => $request->ticket ? $request->ticket : $event['ticket'],
             'location' => $request->location ? $request->location : $event['location'],
@@ -1620,40 +1620,40 @@ class ActivityController extends Controller
     public function addReviewEvent(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'eventId' => 'required',
+            'event_id' => 'required',
             // 'comment' => 'required',
             'stars' => 'required|numeric|min:1|max:5',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
         }
-        $checkVendor = Event::where('id', $request->eventId)->first();
+        $checkVendor = Event::where('id', $request->event_id)->first();
         if (!$checkVendor) {
             return response(['status' => 'error', 'code' => 403, 'message' => 'Event not found'], 403);
         }
         $user = auth()->user();
-        $checkReviews = EventReview::where('userId', $user['id'])->where('eventId', $request->eventId)->get();
+        $checkReviews = EventReview::where('user_id', $user['id'])->where('event_id', $request->event_id)->get();
         if ($checkReviews->count() > 0) {
             return response(['status' => 'error', 'code' => 403, 'message' => 'already reviewed']);
         }
         EventReview::create(
             [
-                'userId' => $user['id'],
-                'eventId' => $request->eventId,
+                'user_id' => $user['id'],
+                'event_id' => $request->event_id,
                 'comment' => $request->comment,
                 'stars' => $request->stars ?  $request->stars : 0,
             ]
         );
         $ratings = $checkVendor['rating'];
         if ($ratings == 0) {
-            Event::where('id', $request->eventId)->update(['rating' => $request->stars]);
+            Event::where('id', $request->event_id)->update(['rating' => $request->stars]);
         } else {
-            $getTotalRatings = EventReview::where('eventId', $request->eventId)->get();
+            $getTotalRatings = EventReview::where('event_id', $request->event_id)->get();
             $totalRatings = $getTotalRatings->count() * 5;
-            $total = EventReview::where('eventId', $request->eventId)->sum('stars');
+            $total = EventReview::where('event_id', $request->event_id)->sum('stars');
             $getmultiply = $total * 5;
             $average = $getmultiply / $totalRatings;
-            Event::where('id', $request->eventId)->update(['rating' => $average]);
+            Event::where('id', $request->event_id)->update(['rating' => $average]);
         }
         return response(['status' => 'success', 'code' => 200, 'message' => 'Vendor reviewed successfully'], 200);
     }
@@ -1661,7 +1661,7 @@ class ActivityController extends Controller
     public function addGoingEvent(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'userId' => 'required|numeric|exists:users,id',
+            'user_id' => 'required|numeric|exists:users,id',
             'id' => 'required|numeric',
         ]);
         if ($validator->fails()) {
@@ -1673,7 +1673,7 @@ class ActivityController extends Controller
         if ($event) {
             if ($event['going'] == null) {
 
-                $newLike = array($request->userId);
+                $newLike = array($request->user_id);
 
                 $jsonGoing = json_encode($newLike);
 
@@ -1690,11 +1690,11 @@ class ActivityController extends Controller
                 $jsonGoing = $event['going'];
                 $likes = json_decode($jsonGoing);
 
-                if (in_array($request->userId, $likes)) {
+                if (in_array($request->user_id, $likes)) {
 
                     return response(['status' => 'error', 'code' => 409, 'data' => null, 'message' => 'already Going'], 409);
                 }
-                array_push($likes, $request->userId);
+                array_push($likes, $request->user_id);
 
                 $newlikes = json_encode($likes);
 
@@ -1716,7 +1716,7 @@ class ActivityController extends Controller
     public function unGoingEvent(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'userId' => 'required|numeric|exists:users,id',
+            'user_id' => 'required|numeric|exists:users,id',
             'id' => 'required|numeric',
         ]);
         if ($validator->fails()) {
@@ -1733,8 +1733,8 @@ class ActivityController extends Controller
 
                 $likes = json_decode($jsonGoing);
 
-                if (in_array($request->userId, $likes)) {
-                    $key = array_search($request->userId, $likes);
+                if (in_array($request->user_id, $likes)) {
+                    $key = array_search($request->user_id, $likes);
                     unset($likes[$key]);
                     $newArray = array_values($likes);
                     $newLike = json_encode($newArray);
@@ -1764,7 +1764,7 @@ class ActivityController extends Controller
     public function addInterestEvent(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'userId' => 'required|numeric|exists:users,id',
+            'user_id' => 'required|numeric|exists:users,id',
             'id' => 'required|numeric',
         ]);
         if ($validator->fails()) {
@@ -1776,7 +1776,7 @@ class ActivityController extends Controller
         if ($event) {
             if ($event['interested'] == null) {
 
-                $newLike = array($request->userId);
+                $newLike = array($request->user_id);
 
                 $jsonInterest = json_encode($newLike);
 
@@ -1793,11 +1793,11 @@ class ActivityController extends Controller
                 $jsonInterest = $event['interested'];
                 $likes = json_decode($jsonInterest);
 
-                if (in_array($request->userId, $likes)) {
+                if (in_array($request->user_id, $likes)) {
 
                     return response(['status' => 'error', 'code' => 409, 'data' => null, 'message' => 'already Interested'], 409);
                 }
-                array_push($likes, $request->userId);
+                array_push($likes, $request->user_id);
 
                 $newlikes = json_encode($likes);
 
@@ -1819,7 +1819,7 @@ class ActivityController extends Controller
     public function unInterestEvent(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'userId' => 'required|numeric|exists:users,id',
+            'user_id' => 'required|numeric|exists:users,id',
             'id' => 'required|numeric',
         ]);
         if ($validator->fails()) {
@@ -1836,8 +1836,8 @@ class ActivityController extends Controller
 
                 $likes = json_decode($jsonInterest);
 
-                if (in_array($request->userId, $likes)) {
-                    $key = array_search($request->userId, $likes);
+                if (in_array($request->user_id, $likes)) {
+                    $key = array_search($request->user_id, $likes);
                     unset($likes[$key]);
                     $newArray = array_values($likes);
                     $newLike = json_encode($newArray);

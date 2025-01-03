@@ -11,8 +11,8 @@ class EventReview extends Model
 
     protected $fillable=[
         'stars',
-        'eventId',
-        'userId',
+        'event_id',
+        'user_id',
         'comment',
     ];
 }

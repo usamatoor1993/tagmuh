@@ -11,8 +11,8 @@ class Review extends Model
 
     protected $fillable=[
         'stars',
-        'companyId',
-        'userId',
+        'company_id',
+        'user_id',
         'comment',
     ];
 }

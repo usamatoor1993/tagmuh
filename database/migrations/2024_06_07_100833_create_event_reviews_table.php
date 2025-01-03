@@ -14,8 +14,12 @@ return new class extends Migration
         Schema::create('event_reviews', function (Blueprint $table) {
             $table->id();
             $table->string('stars')->default(0);
-            $table->string('eventId')->nullable();
-            $table->string('userId')->nullable();
+            // $table->string('eventId')->nullable();
+            $table->unsignedBigInteger('event_id');
+            $table->foreign('event_id')->references('id')->on('events')->onDelete('cascade');
+            // $table->string('userId')->nullable();
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->longText('comment')->nullable();
             $table->timestamps();
         });

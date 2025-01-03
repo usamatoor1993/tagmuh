@@ -95,7 +95,7 @@ class ProfileController extends Controller
                 'BName' => $request->BName ? $request->BName  : $getUser['BName'],
                 // 'email' => $request->email,
                 // 'Bemail' => $request->Bemail,
-                'phoneNumber' => $request->phoneNumber ? $request->phoneNumber  : $getUser['phoneNumber'],
+                'phone_number' => $request->phone_number ? $request->phone_number  : $getUser['phone_number'],
                 'location' =>  $request->location ? $request->location  : $getUser['location'],
                 'BLocation' => $request->BLocation ? $request->BLocation  : $getUser['location'],
                 'password' => $request->password ? bcrypt($request->password) : $getUser['password'],

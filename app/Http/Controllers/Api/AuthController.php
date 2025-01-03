@@ -17,14 +17,14 @@ class AuthController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:users,email',
-            'phoneNumber' => 'required|numeric',
+            'phone_number' => 'required|numeric',
             'password' => 'required|confirmed|min:6',
             'userType' => 'required',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'error' => $validator->errors(), 'message' => 'wrong or missing params'], 403);
         }
-        $checkNumber = User::where('phoneNumber', $request->phoneNumber)->first();
+        $checkNumber = User::where('phone_number', $request->phone_number)->first();
         if ($checkNumber) {
             return response(['status' => 'error', 'code' => 403, 'message' => 'phone number already exists'], 403);
         }
@@ -33,7 +33,7 @@ class AuthController extends Controller
                 'firstName' => 'required',
                 'lastName' => 'required',
                 // 'Bemail' => 'required|email|unique:users,email',
-                'phoneNumber' => 'required|unique:users,phoneNumber',
+                'phone_number' => 'required|unique:users,phone_number',
                 'image' => 'required',
                 'coverPhoto' => 'required',
                 'location' => 'required',
@@ -136,7 +136,7 @@ class AuthController extends Controller
                 'BName' => $request->BName,
                 'email' => $request->email,
                 'Bemail' => $request->Bemail,
-                'phoneNumber' => $request->phoneNumber,
+                'phone_number' => $request->phone_number,
                 'location' => $request->location,
                 'BLocation' => $request->BLocation,
                 'category' => $category,
@@ -186,7 +186,7 @@ class AuthController extends Controller
             $data = [
                 'firstName' => $request->firstName,
                 'email' => $request->email,
-                'phoneNumber' => $request->phoneNumber,
+                'phone_number' => $request->phone_number,
                 'userType' => 'Guest',
                 'image' => $imageName,
             ];

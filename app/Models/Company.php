@@ -9,7 +9,21 @@ class Company extends Model
 {
     use HasFactory;
     protected $fillable=[
-       'user_id','name','email','address','store_hours','category','reels','webLink','profilePhoto','coverPhoto','isVerified','likes','dislikes','rating','isSelected',
+       'user_id',
+       'name',
+       'email',
+       'address',
+       'store_hours',
+       'category',
+       'reels',
+       'web_link',
+       'profile_photo',
+       'cover_photo',
+       'is_verified',
+       'likes',
+       'dislikes',
+       'rating',
+       'is_selected',
     ];
 
     public function user()
@@ -18,10 +32,10 @@ class Company extends Model
     }
     public function employee()
     {
-        return $this->hasMany(Employee::class,'companyId');
+        return $this->hasMany(Employee::class,'company_id');
     }
     public function portfolio()
     {
-        return $this->hasMany(Portfolio::class,'companyId');
+        return $this->hasMany(Portfolio::class,'company_id');
     }
 }

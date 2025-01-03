@@ -11,13 +11,13 @@ class CompanySubAd extends Model
 
     protected $fillable = [
         'images',
-        'productName',
-        'totalProduct',
+        'product_name',
+        'total_product',
         'price',
         'description',
-        'companyAdId',
-        'companyId',
-        'userId',
+        'company_ad_id',
+        'company_id',
+        'user_id',
         'rating',
     ];
 }

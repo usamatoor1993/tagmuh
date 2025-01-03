@@ -18,13 +18,15 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->time('time')->nullable();
             $table->date('date')->nullable();
-            $table->string('eventBy')->nullable();
+            $table->string('event_by')->nullable();
             $table->text('interested')->nullable();
             $table->text('going')->nullable();
             $table->string('email')->nullable();
             $table->string('ticket')->nullable();
             $table->text('location')->nullable();
-            $table->string('userId')->nullable();
+            // $table->string('userid')->nullable();
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('status')->default(0);
             $table->string('rating')->default(0);
 

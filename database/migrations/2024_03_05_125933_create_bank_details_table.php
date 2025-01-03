@@ -13,11 +13,15 @@ return new class extends Migration
     {
         Schema::create('bank_details', function (Blueprint $table) {
             $table->id();
-            $table->text('userId')->nullable();
-            $table->string('companyId')->nullable();
-            $table->text('bankName')->nullable();
-            $table->text('accountName')->nullable();
-            $table->text('accountNumber')->nullable();
+            // $table->text('userId')->nullable();
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            // $table->string('companyId')->nullable();
+            $table->unsignedBigInteger('company_id');
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
+            $table->text('bank_name')->nullable();
+            $table->text('account_name')->nullable();
+            $table->text('account_number')->nullable();
             $table->timestamps();
         });
     }

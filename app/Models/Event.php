@@ -15,20 +15,20 @@ class Event extends Model
         'description',
         'date',
         'time',
-        'eventBy',
+        'event_by',
         'interested',
         'going',
         'email',
         'ticket',
         'status',
         'location',
-        'userId',
+        'user_id',
         'rating',
 
 
     ];
     public function user()
     {
-        return $this->belongsTo(User::class,'userId');
+        return $this->belongsTo(User::class,'user_id');
     }
 }

@@ -14,8 +14,12 @@ return new class extends Migration
         Schema::create('company_sub_ad_reviews', function (Blueprint $table) {
             $table->id();
             $table->string('stars')->default(0);
-            $table->string('companySubAdId')->nullable();
-            $table->string('userId')->nullable();
+            // $table->string('companySubAdId')->nullable();
+            $table->unsignedBigInteger('company_sub_ad_id');
+            $table->foreign('company_sub_ad_id')->references('id')->on('company_sub_ads')->onDelete('cascade');
+            // $table->string('userId')->nullable();
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->longText('comment')->nullable();
             $table->timestamps();
         });

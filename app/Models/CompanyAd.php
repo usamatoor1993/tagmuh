@@ -9,16 +9,16 @@ class CompanyAd extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'acService',
+        'ac_service',
         'images',
-        'businessName',
-        'businessWebsite',
-        'businessLocation',
-        'businessPhoneNumber',
-        'businessEmail',
-        'businessDescription',
-        'companyId',
-        'userId',
+        'business_name',
+        'business_website',
+        'business_location',
+        'business_phone_number',
+        'business_email',
+        'business_description',
+        'company_id',
+        'user_id',
         'status',
         'rating',
         'price',
@@ -26,10 +26,10 @@ class CompanyAd extends Model
 
     public function subAd()
     {
-        return $this->hasMany(CompanySubAd::class, 'companyAdId');
+        return $this->hasMany(CompanySubAd::class, 'company_as_id');
     }
     public function company()
     {
-        return $this->belongsTo(Company::class,'companyId');
+        return $this->belongsTo(Company::class,'company_id');
     }
 }

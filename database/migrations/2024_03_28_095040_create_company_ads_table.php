@@ -13,16 +13,20 @@ return new class extends Migration
     {
         Schema::create('company_ads', function (Blueprint $table) {
             $table->id();
-            $table->string('acService')->nullable();
+            $table->string('ac_service')->nullable();
             $table->text('images')->nullable();
-            $table->string('businessName')->nullable();
-            $table->string('businessWebsite')->nullable();
-            $table->string('businessLocation')->nullable();
-            $table->string('businessPhoneNumber')->nullable();
-            $table->string('businessEmail')->nullable();
-            $table->string('businessDescription')->nullable();
-            $table->string('companyId')->nullable();
-            $table->string('userId')->nullable();
+            $table->string('business_name')->nullable();
+            $table->string('business_website')->nullable();
+            $table->string('business_location')->nullable();
+            $table->string('business_phone_number')->nullable();
+            $table->string('business_email')->nullable();
+            $table->string('business_description')->nullable();
+            // $table->string('companyId')->nullable();
+            $table->unsignedBigInteger('company_id');
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
+            // $table->string('userId')->nullable();
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('price')->nullable();
             $table->string('status')->default(0);
             $table->string('rating')->default(0);
