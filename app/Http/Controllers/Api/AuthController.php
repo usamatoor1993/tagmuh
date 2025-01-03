@@ -19,7 +19,7 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users,email',
             'phone_number' => 'required|numeric',
             'password' => 'required|confirmed|min:6',
-            'userType' => 'required',
+            'user_type' => 'required',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'error' => $validator->errors(), 'message' => 'wrong or missing params'], 403);
@@ -28,25 +28,25 @@ class AuthController extends Controller
         if ($checkNumber) {
             return response(['status' => 'error', 'code' => 403, 'message' => 'phone number already exists'], 403);
         }
-        if ($request->userType == "Business") {
+        if ($request->user_type == "Business") {
             $validator = Validator::make($request->all(), [
-                'firstName' => 'required',
-                'lastName' => 'required',
-                // 'Bemail' => 'required|email|unique:users,email',
+                'first_name' => 'required',
+                'last_name' => 'required',
+                // 'business_email' => 'required|email|unique:users,email',
                 'phone_number' => 'required|unique:users,phone_number',
                 'image' => 'required',
-                'coverPhoto' => 'required',
+                'cover_photo' => 'required',
                 'location' => 'required',
-                'BLocation' => 'required',
+                'business_location' => 'required',
                 'category' => 'required',
-                'cardIssueDate' => 'required',
-                'cardExpireDate' => 'required',
-                'BName' => 'required',
+                'card_issue_date' => 'required',
+                'card_expire_date' => 'required',
+                'business_name' => 'required',
                 'description' => 'required',
-                'idCardFront' => 'required',
-                'idCardBack' => 'required',
-                'BModel' => 'required',
-                'BLicense' => 'required',
+                'id_cardFront' => 'required',
+                'id_cardBack' => 'required',
+                'business_model' => 'required',
+                'business_license' => 'required',
             ]);
             if ($validator->fails()) {
                 return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'error' => $validator->errors(), 'message' => 'wrong or missing params'], 403);
@@ -65,33 +65,33 @@ class AuthController extends Controller
                 $imageName = null;
             }
 
-            if (isset($request->coverPhoto)) {
-                if ($request->hasFile('coverPhoto')) {
-                    $coverName = rand() . time() . '.' . $request->coverPhoto->extension();
-                    $request->coverPhoto->move(public_path('coverPhoto'), $coverName);
-                    $coverName = asset('coverPhoto') . '/' . $coverName;
+            if (isset($request->cover_photo)) {
+                if ($request->hasFile('cover_photo')) {
+                    $coverName = rand() . time() . '.' . $request->cover_photo->extension();
+                    $request->cover_photo->move(public_path('cover_photo'), $coverName);
+                    $coverName = asset('cover_photo') . '/' . $coverName;
                 } else {
                     return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Image should be file'], 422);
                 }
             } else {
                 $coverName = null;
             }
-            if (isset($request->BLicense)) {
-                if ($request->hasFile('BLicense')) {
-                    $licenseName = rand() . time() . '.' . $request->BLicense->extension();
-                    $request->BLicense->move(public_path('BLicense'), $licenseName);
-                    $licenseName = asset('BLicense') . '/' . $licenseName;
+            if (isset($request->business_license)) {
+                if ($request->hasFile('business_license')) {
+                    $licenseName = rand() . time() . '.' . $request->business_license->extension();
+                    $request->business_license->move(public_path('business_license'), $licenseName);
+                    $licenseName = asset('business_license') . '/' . $licenseName;
                 } else {
                     return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Image should be file'], 422);
                 }
             } else {
                 $coverName = null;
             }
-            if (isset($request->idCardFront)) {
-                if ($request->hasFile('idCardFront')) {
-                    $idFrontName = rand() . time() . '.' . $request->idCardFront->extension();
-                    $request->idCardFront->move(public_path('idCard'), $idFrontName);
-                    $idFrontName = url('idCard') . '/' . $idFrontName;
+            if (isset($request->id_cardFront)) {
+                if ($request->hasFile('id_cardFront')) {
+                    $idFrontName = rand() . time() . '.' . $request->id_cardFront->extension();
+                    $request->id_cardFront->move(public_path('id_card'), $idFrontName);
+                    $idFrontName = url('id_card') . '/' . $idFrontName;
                 } else {
                     return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Image should be file'], 422);
                 }
@@ -99,23 +99,23 @@ class AuthController extends Controller
                 $idFrontName = null;
             }
 
-            if (isset($request->idCardBack)) {
-                if ($request->hasFile('idCardBack')) {
-                    $idBackName = rand() . time() . '.' . $request->idCardBack->extension();
-                    $request->idCardBack->move(public_path('idCard'), $idBackName);
-                    $idBackName = url('idCard') . '/' . $idBackName;
+            if (isset($request->id_cardBack)) {
+                if ($request->hasFile('id_cardBack')) {
+                    $idBackName = rand() . time() . '.' . $request->id_cardBack->extension();
+                    $request->id_cardBack->move(public_path('id_card'), $idBackName);
+                    $idBackName = url('id_card') . '/' . $idBackName;
                 } else {
                     return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Image should be file'], 422);
                 }
             } else {
                 $idBackName = null;
             }
-            $idCard = [
+            $id_card = [
                 'front' => $idFrontName,
                 'back' => $idBackName,
             ];
-            $categoryVerified=1;
-            $idCard = json_encode($idCard, true);
+            $category_verified=1;
+            $id_card = json_encode($id_card, true);
             if(!is_numeric($request->category)){
                 $checkCategory=Service::where('name',$request->category)->first();
                 if($checkCategory){
@@ -124,32 +124,32 @@ class AuthController extends Controller
                 }else{
                     $category=Service::create(['name'=>$request->category]);
                     $category=$category->id;
-                    $categoryVerified=0;
+                    $category_verified=0;
                 }
             }else{
                 $category=$request->category;
             }
           
             $data = [
-                'firstName' => $request->firstName,
-                'lastName' => $request->lastName,
-                'BName' => $request->BName,
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'business_name' => $request->business_name,
                 'email' => $request->email,
-                'Bemail' => $request->Bemail,
+                'business_email' => $request->business_email,
                 'phone_number' => $request->phone_number,
                 'location' => $request->location,
-                'BLocation' => $request->BLocation,
+                'business_location' => $request->business_location,
                 'category' => $category,
-                'cardIssueDate' => $request->cardIssueDate,
-                'cardExpireDate' => $request->cardExpireDate,
+                'card_issue_date' => $request->card_issue_date,
+                'card_expire_date' => $request->card_expire_date,
                 'description' => $request->description,
-                'idCard' => $idCard,
-                'userType' => 'Business',
+                'id_card' => $id_card,
+                'user_type' => 'Business',
                 'image' =>   $imageName,
-                'coverPhoto' =>  $coverName,
-                'BModel' =>  $request->BModel,
-                'BLicense' =>  $licenseName,
-                'categoryVerified'=>$categoryVerified,
+                'cover_photo' =>  $coverName,
+                'business_model' =>  $request->business_model,
+                'business_license' =>  $licenseName,
+                'category_verified'=>$category_verified,
                 'timings'=>$request->timings,
             ];
 
@@ -164,14 +164,14 @@ class AuthController extends Controller
             $success['email'] = $user->email;
             $user = User::where('email', $request->email)->first();
             // $user['image'] = url('Profile_Images') . '/' . $user['image'];
-            $user['idCard'] = json_decode($user['idCard'], true);
-            // foreach($user['idCard'] as $idCard){
-            //     $idCard['front']=url('idCard') . '/' . $idCard['front'];
-            //     $idCard['back']=url('idCard') . '/' . $idCard['back'];
+            $user['id_card'] = json_decode($user['id_card'], true);
+            // foreach($user['id_card'] as $id_card){
+            //     $id_card['front']=url('id_card') . '/' . $id_card['front'];
+            //     $id_card['back']=url('id_card') . '/' . $id_card['back'];
             // }
             return response(['status' => 'success', 'code' => 200, 'user' => $user, 'data' => $success, 'message' => 'User registered successfully as driver'], 200);
         }
-        if ($request->userType == "Guest") {
+        if ($request->user_type == "Guest") {
             if (isset($request->image)) {
                 if ($request->hasFile('image')) {
                     $imageName = rand() . time() . '.' . $request->image->extension();
@@ -184,10 +184,10 @@ class AuthController extends Controller
                 $imageName = null;
             }
             $data = [
-                'firstName' => $request->firstName,
+                'first_name' => $request->first_name,
                 'email' => $request->email,
                 'phone_number' => $request->phone_number,
-                'userType' => 'Guest',
+                'user_type' => 'Guest',
                 'image' => $imageName,
             ];
             $data['password'] = bcrypt($request->password);
@@ -196,10 +196,10 @@ class AuthController extends Controller
             $success['email'] = $user->email;
             $user = User::where('email', $request->email)->first();
             // $user['image'] = url('Profile_Images') . '/' . $user['image'];
-            // $user['coverPhoto'] = url('coverPhoto') . '/' . $user['coverPhoto'];
-            $user['idCard'] = json_decode($user['idCard'], true);
-            // foreach($user['idCard'] as $idCard){
-            //     $idCard=url('idCard') . '/' . $idCard;
+            // $user['cover_photo'] = url('cover_photo') . '/' . $user['cover_photo'];
+            $user['id_card'] = json_decode($user['id_card'], true);
+            // foreach($user['id_card'] as $id_card){
+            //     $id_card=url('id_card') . '/' . $id_card;
             // }
 
             return response(['status' => 'success', 'code' => 200, 'user' => $user, 'data' => $success, 'message' => 'User registered successfully as grage successfully'], 200);
@@ -227,8 +227,8 @@ class AuthController extends Controller
             $success['token'] =  $user->createToken('MyApp')->plainTextToken;
             $success['name'] =  $user->name;
             $success['email'] =  $user->email;
-            if($user['idCard']!=null){
-            $user['idCard'] = json_decode($user['idCard'], true);
+            if($user['id_card']!=null){
+            $user['id_card'] = json_decode($user['id_card'], true);
             }
             return response(['status' => 'success', 'code' => 200, 'user' => $user, 'data' => $success, 'message' => 'User logged in successfully'], 200);
         } else {
@@ -283,8 +283,8 @@ class AuthController extends Controller
             if ($check == 1) {
                 $user = User::where('id', $id)->first();
                 if ($user) {
-                    if($user['idCard']!=null){
-                        $user['idCard'] = json_decode($user['idCard'], true);
+                    if($user['id_card']!=null){
+                        $user['id_card'] = json_decode($user['id_card'], true);
                         }
                     return response(['status' => 'success', 'code' => 200, 'user' => $user, 'message' => 'User details'], 200);
                 } else {
