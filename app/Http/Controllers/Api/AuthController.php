@@ -43,8 +43,8 @@ class AuthController extends Controller
                 'card_expire_date' => 'required',
                 'business_name' => 'required',
                 'description' => 'required',
-                'id_cardFront' => 'required',
-                'id_cardBack' => 'required',
+                'id_card_front' => 'required',
+                'id_card_back' => 'required',
                 'business_model' => 'required',
                 'business_license' => 'required',
             ]);
@@ -87,10 +87,10 @@ class AuthController extends Controller
             } else {
                 $coverName = null;
             }
-            if (isset($request->id_cardFront)) {
-                if ($request->hasFile('id_cardFront')) {
-                    $idFrontName = rand() . time() . '.' . $request->id_cardFront->extension();
-                    $request->id_cardFront->move(public_path('id_card'), $idFrontName);
+            if (isset($request->id_card_front)) {
+                if ($request->hasFile('id_card_front')) {
+                    $idFrontName = rand() . time() . '.' . $request->id_card_front->extension();
+                    $request->id_card_front->move(public_path('id_card'), $idFrontName);
                     $idFrontName = url('id_card') . '/' . $idFrontName;
                 } else {
                     return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Image should be file'], 422);
@@ -99,10 +99,10 @@ class AuthController extends Controller
                 $idFrontName = null;
             }
 
-            if (isset($request->id_cardBack)) {
-                if ($request->hasFile('id_cardBack')) {
-                    $idBackName = rand() . time() . '.' . $request->id_cardBack->extension();
-                    $request->id_cardBack->move(public_path('id_card'), $idBackName);
+            if (isset($request->id_card_back)) {
+                if ($request->hasFile('id_card_back')) {
+                    $idBackName = rand() . time() . '.' . $request->id_card_back->extension();
+                    $request->id_card_back->move(public_path('id_card'), $idBackName);
                     $idBackName = url('id_card') . '/' . $idBackName;
                 } else {
                     return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Image should be file'], 422);

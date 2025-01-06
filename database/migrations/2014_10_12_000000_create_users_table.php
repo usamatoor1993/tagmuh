@@ -38,8 +38,8 @@ return new class extends Migration
             $table->integer('status')->default(0);
             $table->integer('category_verified')->default(0);
             $table->integer('is_verified')->default(0);
-            $table->text('likes')->nullable();
-            $table->text('dislikes')->nullable();
+            // $table->text('likes')->nullable();
+            // $table->text('dislikes')->nullable();
             
             $table->rememberToken();
             $table->timestamps();
