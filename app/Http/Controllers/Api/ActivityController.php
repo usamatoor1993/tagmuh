@@ -618,7 +618,7 @@ class ActivityController extends Controller
         }
     }
 
-    public function getEmployeeBycompany_id(Request $request)
+    public function getEmployeeBycompanyId(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'id' => 'required|numeric|exists:companies,id',

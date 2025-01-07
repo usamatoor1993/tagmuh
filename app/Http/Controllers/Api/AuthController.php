@@ -24,6 +24,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'error' => $validator->errors(), 'message' => 'wrong or missing params'], 403);
         }
+
         $checkNumber = User::where('phone_number', $request->phone_number)->first();
         if ($checkNumber) {
             return response(['status' => 'error', 'code' => 403, 'message' => 'phone number already exists'], 403);
@@ -51,6 +52,7 @@ class AuthController extends Controller
             if ($validator->fails()) {
                 return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'error' => $validator->errors(), 'message' => 'wrong or missing params'], 403);
             }
+           
 
             if (isset($request->image)) {
                 if ($request->hasFile('image')) {
@@ -64,7 +66,7 @@ class AuthController extends Controller
             } else {
                 $imageName = null;
             }
-
+            
             if (isset($request->cover_photo)) {
                 if ($request->hasFile('cover_photo')) {
                     $coverName = rand() . time() . '.' . $request->cover_photo->extension();
@@ -152,7 +154,6 @@ class AuthController extends Controller
                 'category_verified'=>$category_verified,
                 'timings'=>$request->timings,
             ];
-
             $data['password'] = bcrypt($request->password);
             $user = User::create($data);
             if(!is_numeric($request->category)){

@@ -53,10 +53,10 @@ class ProfileController extends Controller
             } else {
                 $coverName = null;
             }
-            if (isset($request->idCardFront)) {
-                if ($request->hasFile('idCardFront')) {
-                    $idFrontName = rand() . time() . '.' . $request->idCardFront->extension();
-                    $request->idCardFront->move(public_path('idCard'), $idFrontName);
+            if (isset($request->id_card_front)) {
+                if ($request->hasFile('id_card_front')) {
+                    $idFrontName = rand() . time() . '.' . $request->id_card_front->extension();
+                    $request->id_card_front->move(public_path('idCard'), $idFrontName);
                     $idFrontName = url('idCard') . '/' . $idFrontName;
                 } else {
                     return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Id card front Image should be file'], 422);
@@ -65,10 +65,10 @@ class ProfileController extends Controller
                 $idFrontName = null;
             }
 
-            if (isset($request->idCardBack)) {
-                if ($request->hasFile('idCardBack')) {
-                    $idBackName = rand() . time() . '.' . $request->idCardBack->extension();
-                    $request->idCardBack->move(public_path('idCard'), $idBackName);
+            if (isset($request->id_card_back)) {
+                if ($request->hasFile('id_card_back')) {
+                    $idBackName = rand() . time() . '.' . $request->id_card_back->extension();
+                    $request->id_card_back->move(public_path('idCard'), $idBackName);
                     $idBackName = url('idCard') . '/' . $idBackName;
                 } else {
                     return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Id card back Image should be file'], 422);
@@ -76,39 +76,39 @@ class ProfileController extends Controller
             } else {
                 $idBackName = null;
             }
-            if ($getUser['idCard'] != null && isset($request->idCardBack) && isset($request->idCardFront)) {
+            if ($getUser['idCard'] != null && isset($request->id_card_back) && isset($request->id_card_front)) {
                 $idCardDecode = json_decode($getUser['idCard'], true);
                 $idCard = [
-                    'front' => $request->idCardFront ? $idFrontName : $idCardDecode['front'],
-                    'back' => $request->idCardBack ? $idBackName : $idCardDecode['back'],
+                    'front' => $request->id_card_front ? $idFrontName : $idCardDecode['front'],
+                    'back' => $request->id_card_back ? $idBackName : $idCardDecode['back'],
                 ];
-            } elseif (isset($request->idCardBack) && isset($request->idCardFront) && $getUser['idCard'] == null) {
+            } elseif (isset($request->id_card_back) && isset($request->id_card_front) && $getUser['idCard'] == null) {
                 $idCard = [
-                    'front' => $request->idCardFront ? $idFrontName : null,
-                    'back' => $request->idCardBack ? $idBackName : null
+                    'front' => $request->id_card_front ? $idFrontName : null,
+                    'back' => $request->id_card_back ? $idBackName : null
                 ];
             }
 
             $data = [
-                'firstName' => $request->firstName ? $request->firstName  : $getUser['firstName'],
-                'lastName' => $request->lastName ? $request->lastName  : $getUser['lastName'],
-                'BName' => $request->BName ? $request->BName  : $getUser['BName'],
+                'first_name' => $request->first_name ? $request->first_name  : $getUser['firstName'],
+                'last_name' => $request->last_name ? $request->last_name  : $getUser['last_name'],
+                'business_name' => $request->business_name ? $request->business_name  : $getUser['business_name'],
                 // 'email' => $request->email,
                 // 'Bemail' => $request->Bemail,
                 'phone_number' => $request->phone_number ? $request->phone_number  : $getUser['phone_number'],
                 'location' =>  $request->location ? $request->location  : $getUser['location'],
-                'BLocation' => $request->BLocation ? $request->BLocation  : $getUser['location'],
+                'business_location' => $request->business_location ? $request->business_location  : $getUser['location'],
                 'password' => $request->password ? bcrypt($request->password) : $getUser['password'],
                 // 'category' => $request->category,
                 // 'cardIssueDate' => $request->cardIssueDate,
                 // 'cardExpireDate' => $request->cardExpireDate,
                 'description' => $request->description ? $request->description : $getUser['description'],
-                'idCard' => $request->idCardFront ?  $idCard : $getUser['idCard'],
+                'id_card' => $request->id_card_front ?  $idCard : $getUser['idCard'],
                 // 'userType' => 'Company',
                 'image' =>   $request->image ? $imageName :  $getUser['image'],
-                'coverPhoto' => $request->coverPhoto ? $coverName : $getUser['coverPhoto'],
-                'BModel' =>  $request->BModel ?  $request->BModel : $getUser['BModel'],
-                'BLicense' => $request->BLicense ? $licenseName : $getUser['BLicense'],
+                'cover_photo' => $request->coverPhoto ? $coverName : $getUser['coverPhoto'],
+                'business_model' =>  $request->BModel ?  $request->BModel : $getUser['BModel'],
+                'business_license' => $request->BLicense ? $licenseName : $getUser['BLicense'],
                 'timings' => $request->timings ? $request->timings : $getUser['timings'],
             ];
 
