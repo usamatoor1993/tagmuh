@@ -1561,9 +1561,17 @@ class ActivityController extends Controller
         $event = Event::with('user')->get();
         if ($event->count() > 0) {
             foreach ($event as $events) {
+        
                 $events['image'] = json_decode($events['image'], true);
                 $events['going'] = json_decode($events['going'], true);
                 $events['interested'] = json_decode($events['interested'], true);
+                
+                    $events['user']['id_card']=null;
+                // if(!empty($idcard) || $idcard!=null ||  $idcard!=""){
+                // $idcard = json_decode($idcard, true);
+                // $events['user']['id_card']=$idcard;
+                // }
+                
                 $going = $events['going'];
                 $interested = $events['interested'];
                 if (!empty($going)) {
@@ -1576,6 +1584,7 @@ class ActivityController extends Controller
                 } else {
                     $events['interestedCount'] = 0;
                 }
+               
             }
             return response(['status' => 'success', 'code' => 200, 'data' => $event, 'message' => 'Get Event Successfully'], 200);
         } else {
@@ -1583,6 +1592,41 @@ class ActivityController extends Controller
         }
     }
 
+    public function getAllMyEvents()
+    {
+        $event = Event::where('user_id',auth()->user()->id)->get();
+        if ($event->count() > 0) {
+            foreach ($event as $events) {
+        
+                $events['image'] = json_decode($events['image'], true);
+                $events['going'] = json_decode($events['going'], true);
+                $events['interested'] = json_decode($events['interested'], true);
+                
+                    $events['user']['id_card']=null;
+                // if(!empty($idcard) || $idcard!=null ||  $idcard!=""){
+                // $idcard = json_decode($idcard, true);
+                // $events['user']['id_card']=$idcard;
+                // }
+                
+                $going = $events['going'];
+                $interested = $events['interested'];
+                if (!empty($going)) {
+                    $events['goingCount'] = count($going);
+                } else {
+                    $events['goingCount'] = 0;
+                }
+                if (!empty($interested)) {
+                    $events['interestedCount'] = count($interested);
+                } else {
+                    $events['interestedCount'] = 0;
+                }
+                // dd($events['user']);
+            }
+            return response(['status' => 'success', 'code' => 200, 'data' => $event, 'message' => 'Get Event Successfully'], 200);
+        } else {
+            return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Get Event Failed'], 403);
+        }
+    }
     public function getEventDetail(Request $request)
     {
         $validator = Validator::make($request->all(), [
