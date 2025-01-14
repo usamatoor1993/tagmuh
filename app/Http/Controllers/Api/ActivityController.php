@@ -1439,7 +1439,7 @@ class ActivityController extends Controller
             'description' => $request->description,
             'body' => 'This is for testing email using smtp.'
         ];
-
+ 
         Mail::to($request->email)->send(new QuoteMail($data));
         return response(['status' => 'success', 'code' => 200, 'message' => "Email is sent successfully."], 200);
     }
