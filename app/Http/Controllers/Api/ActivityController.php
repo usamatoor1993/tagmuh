@@ -532,107 +532,107 @@ class ActivityController extends Controller
         }
     }
 
-    public function addEmployee(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required|email|unique:employees,email',
-            'company_id' => 'required|numeric|exists:companies,id',
-            'image' => 'required',
-        ]);
-        if ($validator->fails()) {
-            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
-        }
+    // public function addEmployee(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'name' => 'required',
+    //         'email' => 'required|email|unique:employees,email',
+    //         'company_id' => 'required|numeric|exists:companies,id',
+    //         'image' => 'required',
+    //     ]);
+    //     if ($validator->fails()) {
+    //         return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+    //     }
 
-        if (isset($request->image)) {
-            if ($request->hasFile('image')) {
-                $imageName = rand() . time() . '.' . $request->image->extension();
-                $request->image->move(public_path('employee'), $imageName);
-                $imageName = asset('employee') . '/' . $imageName;
-            } else {
-                return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Image should be file'], 422);
-            }
-        } else {
-            $imageName = null;
-        }
-        $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'image' => $imageName,
-            'user_id' => auth()->user()->id,
-            'company_id' => $request->company_id,
-        ];
-        $employee = Employee::create($data);
-        if (isset($employee)) {
-            return response(['status' => 'success', 'code' => 200, 'data' => $employee, 'message' => 'Add Employee Successfully'], 200);
-        } else {
-            return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Add Employee Failed']);
-        }
-    }
+    //     if (isset($request->image)) {
+    //         if ($request->hasFile('image')) {
+    //             $imageName = rand() . time() . '.' . $request->image->extension();
+    //             $request->image->move(public_path('employee'), $imageName);
+    //             $imageName = asset('employee') . '/' . $imageName;
+    //         } else {
+    //             return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Image should be file'], 422);
+    //         }
+    //     } else {
+    //         $imageName = null;
+    //     }
+    //     $data = [
+    //         'name' => $request->name,
+    //         'email' => $request->email,
+    //         'image' => $imageName,
+    //         'user_id' => auth()->user()->id,
+    //         'company_id' => $request->company_id,
+    //     ];
+    //     $employee = Employee::create($data);
+    //     if (isset($employee)) {
+    //         return response(['status' => 'success', 'code' => 200, 'data' => $employee, 'message' => 'Add Employee Successfully'], 200);
+    //     } else {
+    //         return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Add Employee Failed']);
+    //     }
+    // }
 
-    public function updateEmployee(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'id' => 'required|numeric|exists:employees,id',
-        ]);
-        if ($validator->fails()) {
-            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
-        }
-        $getEmployee = Employee::where('id', $request->id)->first();
-        if (isset($request->image)) {
-            if ($request->hasFile('image')) {
-                $imageName = rand() . time() . '.' . $request->image->extension();
-                $request->image->move(public_path('employee'), $imageName);
-                $imageName = asset('employee') . '/' . $imageName;
-            } else {
-                return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Image should be file'], 422);
-            }
-        } else {
-            $imageName = null;
-        }
-        $data = [
-            'name' => $request->name ? $request->name  : $getEmployee['name'],
-            'image' =>  $request->image ? $imageName  : $getEmployee['image'],
-        ];
-        $employee = Employee::where('id', $request->id)->update($data);
-        if ($employee == 1) {
-            return response(['status' => 'success', 'code' => 200, 'message' => 'Update Employee Successfully'], 200);
-        } else {
-            return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Update Employee Failed']);
-        }
-    }
+    // public function updateEmployee(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'id' => 'required|numeric|exists:employees,id',
+    //     ]);
+    //     if ($validator->fails()) {
+    //         return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+    //     }
+    //     $getEmployee = Employee::where('id', $request->id)->first();
+    //     if (isset($request->image)) {
+    //         if ($request->hasFile('image')) {
+    //             $imageName = rand() . time() . '.' . $request->image->extension();
+    //             $request->image->move(public_path('employee'), $imageName);
+    //             $imageName = asset('employee') . '/' . $imageName;
+    //         } else {
+    //             return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Image should be file'], 422);
+    //         }
+    //     } else {
+    //         $imageName = null;
+    //     }
+    //     $data = [
+    //         'name' => $request->name ? $request->name  : $getEmployee['name'],
+    //         'image' =>  $request->image ? $imageName  : $getEmployee['image'],
+    //     ];
+    //     $employee = Employee::where('id', $request->id)->update($data);
+    //     if ($employee == 1) {
+    //         return response(['status' => 'success', 'code' => 200, 'message' => 'Update Employee Successfully'], 200);
+    //     } else {
+    //         return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Update Employee Failed']);
+    //     }
+    // }
 
-    public function deleteEmployee(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'id' => 'required|numeric|exists:employees,id',
-        ]);
-        if ($validator->fails()) {
-            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
-        }
-        $employee = Employee::where('id', $request->id)->delete();
-        if ($employee == 1) {
-            return response(['status' => 'success', 'code' => 200, 'message' => 'Delete Employee Successfully'], 200);
-        } else {
-            return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Delete Employee Failed']);
-        }
-    }
+    // public function deleteEmployee(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'id' => 'required|numeric|exists:employees,id',
+    //     ]);
+    //     if ($validator->fails()) {
+    //         return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+    //     }
+    //     $employee = Employee::where('id', $request->id)->delete();
+    //     if ($employee == 1) {
+    //         return response(['status' => 'success', 'code' => 200, 'message' => 'Delete Employee Successfully'], 200);
+    //     } else {
+    //         return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Delete Employee Failed']);
+    //     }
+    // }
 
-    public function getEmployeeByCompanyId(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'id' => 'required|numeric|exists:companies,id',
-        ]);
-        if ($validator->fails()) {
-            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
-        }
-        $employee = Employee::where('company_id', $request->id)->get();
-        if ($employee->count() > 0) {
-            return response(['status' => 'success', 'code' => 200, 'data' => $employee, 'message' => 'Get Employee Successfully'], 200);
-        } else {
-            return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Get Employee Failed']);
-        }
-    }
+    // public function getEmployeeByCompanyId(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'id' => 'required|numeric|exists:companies,id',
+    //     ]);
+    //     if ($validator->fails()) {
+    //         return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+    //     }
+    //     $employee = Employee::where('company_id', $request->id)->get();
+    //     if ($employee->count() > 0) {
+    //         return response(['status' => 'success', 'code' => 200, 'data' => $employee, 'message' => 'Get Employee Successfully'], 200);
+    //     } else {
+    //         return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Get Employee Failed']);
+    //     }
+    // }
 
     public function addPortfolio(Request $request)
     {
@@ -722,6 +722,7 @@ class ActivityController extends Controller
             return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Delete Portfolio Failed']);
         }
     }
+
     public function getPortfolioByCompany(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -731,6 +732,21 @@ class ActivityController extends Controller
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
         $portfolio = Portfolio::where('company_id', $request->id)->get();
+        if ($portfolio->count() > 0) {
+            return response(['status' => 'success', 'code' => 200, 'data' => $portfolio, 'message' => 'Get Portfolio Successfully'], 200);
+        } else {
+            return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Get Portfolio Failed']);
+        }
+    }
+    public function getPortfolioById(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|numeric|exists:portfolios,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        $portfolio = Portfolio::where('id', $request->id)->get();
         if ($portfolio->count() > 0) {
             return response(['status' => 'success', 'code' => 200, 'data' => $portfolio, 'message' => 'Get Portfolio Successfully'], 200);
         } else {
@@ -1178,7 +1194,7 @@ class ActivityController extends Controller
     }
     public function getCompanyAd()
     {
-        $companyAd = CompanyAd::with('subAd', 'company')->get();
+        $companyAd = CompanyAd::with('sub_ad', 'company')->get();
         if ($companyAd->count() > 0) {
             for ($i = 0; $i < count($companyAd); $i++) {
                 $companyAd[$i]['images'] = json_decode($companyAd[$i]['images'], true);
@@ -1456,6 +1472,8 @@ class ActivityController extends Controller
             'event_by' => 'required',
             'ticket' => 'required',
             'location' => 'required',
+            'company_id' => 'required|exists:companies,id',
+
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
@@ -1484,6 +1502,7 @@ class ActivityController extends Controller
             'email' => $request->email,
             'ticket' => $request->ticket,
             'location' => $request->location,
+            'company_id' => $request->company_id,
             'user_id' => auth()->user()->id,
         ];
         $event = Event::create($data);
@@ -1558,7 +1577,7 @@ class ActivityController extends Controller
 
     public function getAllEvents()
     {
-        $event = Event::with('user')->get();
+        $event = Event::with('user','company')->get();
         if ($event->count() > 0) {
             foreach ($event as $events) {
         
@@ -1594,7 +1613,7 @@ class ActivityController extends Controller
 
     public function getAllMyEvents()
     {
-        $event = Event::where('user_id',auth()->user()->id)->get();
+        $event = Event::where('user_id',auth()->user()->id)->with('company')->get();
         if ($event->count() > 0) {
             foreach ($event as $events) {
         
@@ -1635,7 +1654,7 @@ class ActivityController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
         }
-        $event = Event::where('id', $request->id)->with('user')->first();
+        $event = Event::where('id', $request->id)->with('user','company')->first();
         if ($event) {
 
             $event['image'] = json_decode($event['image'], true);

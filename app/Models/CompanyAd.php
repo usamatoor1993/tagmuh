@@ -26,7 +26,7 @@ class CompanyAd extends Model
 
     public function subAd()
     {
-        return $this->hasMany(CompanySubAd::class, 'company_as_id');
+        return $this->hasMany(CompanySubAd::class, 'company_ad_id');
     }
     public function company()
     {

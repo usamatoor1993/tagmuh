@@ -44,11 +44,10 @@ Route::post('/deleteCompany', 'App\Http\Controllers\Api\ActivityController@delet
 
 Route::post('/getCompanyByServiceId', 'App\Http\Controllers\Api\ActivityController@getCompanyByServiceId')->middleware('auth:sanctum');
 
-Route::post('/addEmployee', 'App\Http\Controllers\Api\ActivityController@addEmployee')->middleware('auth:sanctum');
-Route::post('/updateEmployee', 'App\Http\Controllers\Api\ActivityController@updateEmployee')->middleware('auth:sanctum');
-Route::post('/deleteEmployee', 'App\Http\Controllers\Api\ActivityController@deleteEmployee')->middleware('auth:sanctum');
-
-Route::post('/getEmployeeByCompanyId', 'App\Http\Controllers\Api\ActivityController@getEmployeeByCompanyId')->middleware('auth:sanctum');
+// Route::post('/addEmployee', 'App\Http\Controllers\Api\ActivityController@addEmployee')->middleware('auth:sanctum');
+// Route::post('/updateEmployee', 'App\Http\Controllers\Api\ActivityController@updateEmployee')->middleware('auth:sanctum');
+// Route::post('/deleteEmployee', 'App\Http\Controllers\Api\ActivityController@deleteEmployee')->middleware('auth:sanctum');
+// Route::post('/getEmployeeByCompanyId', 'App\Http\Controllers\Api\ActivityController@getEmployeeByCompanyId')->middleware('auth:sanctum');
 
 Route::post('/addPortfolio', 'App\Http\Controllers\Api\ActivityController@addPortfolio')->middleware('auth:sanctum');
 Route::post('/updatePortfolio', 'App\Http\Controllers\Api\ActivityController@updatePortfolio')->middleware('auth:sanctum');
@@ -99,3 +98,5 @@ Route::get('/getAllMyEvents', 'App\Http\Controllers\Api\ActivityController@getAl
 
 Route::post('/bookingMail', 'App\Http\Controllers\Api\GuestController@bookingMail')->middleware('auth:sanctum');
 Route::post('/dateSearchEvent', 'App\Http\Controllers\Api\GuestController@dateSearchEvent')->middleware('auth:sanctum');
+Route::post('/getAllCategories', 'App\Http\Controllers\Api\ProfileController@getAllCategories')->middleware('auth:sanctum');
+Route::post('/getPortfolioById', 'App\Http\Controllers\Api\ActivityController@getPortfolioById')->middleware('auth:sanctum');

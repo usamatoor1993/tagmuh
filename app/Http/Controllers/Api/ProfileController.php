@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -147,8 +148,18 @@ class ProfileController extends Controller
         $sender_id = Auth::user()->id;
         $reports = Report::where('sender_id', $sender_id)->orderBy('created_at', 'desc')->get();
         if ($reports->count() == 0) {
-            return response(['status' => 'success', 'code' => 200, 'message' => 'No reports found'], 200);
+            return response(['status' => 'success', 'code' => 403, 'message' => 'No reports found'], 403);
         }
         return response(['status' => 'success', 'code' => 200, 'data' => $reports, 'message' => 'Report list'], 200);
+    }
+
+    public function getAllCategories()
+    {
+        $categories = Category::get();
+        if ($categories->count() == 0) {
+            return response(['status' => 'success', 'message' => 'No categories found'], 403);
+        } else {
+            return response(['status' => 'success', 'data' => $categories, 'message' => 'Categories list'], 200);
+        }
     }
 }
