@@ -32,7 +32,7 @@ class Company extends Model
     }
     public function employee()
     {
-        return $this->hasMany(Employee::class,'company_id');
+        return $this->hasMany(User::class,'company_id');
     }
     public function portfolio()
     {

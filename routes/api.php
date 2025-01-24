@@ -100,3 +100,13 @@ Route::post('/bookingMail', 'App\Http\Controllers\Api\GuestController@bookingMai
 Route::post('/dateSearchEvent', 'App\Http\Controllers\Api\GuestController@dateSearchEvent')->middleware('auth:sanctum');
 Route::post('/getAllCategories', 'App\Http\Controllers\Api\ProfileController@getAllCategories')->middleware('auth:sanctum');
 Route::post('/getPortfolioById', 'App\Http\Controllers\Api\ActivityController@getPortfolioById')->middleware('auth:sanctum');
+
+
+Route::post('/addEmployee', 'App\Http\Controllers\Api\BusinessController@addEmployee')->middleware('auth:sanctum');
+Route::post('/removeEmployee', 'App\Http\Controllers\Api\BusinessController@removeEmployee')->middleware('auth:sanctum');
+Route::post('/getEmployeeByCompany', 'App\Http\Controllers\Api\BusinessController@getEmployeeByCompany')->middleware('auth:sanctum');
+
+Route::post('/addPortfolioAd', 'App\Http\Controllers\Api\BusinessController@addPortfolioAd')->middleware('auth:sanctum');
+Route::post('/updatePortfolioAd', 'App\Http\Controllers\Api\BusinessController@updatePortfolioAd')->middleware('auth:sanctum');
+Route::post('/deletePortfolioAd', 'App\Http\Controllers\Api\BusinessController@deletePortfolioAd')->middleware('auth:sanctum');
+Route::post('/getPortfolioAdByPortfolio', 'App\Http\Controllers\Api\BusinessController@getPortfolioAdByPortfolio')->middleware('auth:sanctum');

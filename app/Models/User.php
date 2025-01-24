@@ -45,6 +45,7 @@ class User extends Authenticatable
         'isVerified',
         'likes',
         'dislikes',
+        'company_id',
     ];
 
     /**
