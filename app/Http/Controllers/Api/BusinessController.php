@@ -162,6 +162,10 @@ class BusinessController extends Controller
                     $imageName = rand() . time() . '.' . $request->images[$i]->extension();
                     $request->images[$i]->move(public_path('portfolioAdImages'), $imageName);
                     $getimageName[$i] = url('portfolioAdImages') . '/' . $imageName;
+                    if (file_exists($getimageName[$i])) {
+                        unlink($getimageName[$i]);
+                    }
+
                 }
             }
             if (empty($request->imagesUrl)) {

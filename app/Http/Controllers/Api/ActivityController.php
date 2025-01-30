@@ -1192,9 +1192,15 @@ class ActivityController extends Controller
             return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Delete Company Ad Failed'], 403);
         }
     }
-    public function getCompanyAd()
+    public function getCompanyAd(Request $request)
     {
-        $companyAd = CompanyAd::with('sub_ad', 'company')->get();
+        $validator = Validator::make($request->all(), [
+            'company_id' => 'required|numeric|exists:companies,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
+        }
+        $companyAd = CompanyAd::where('company_id',$request->company_id)->with('subAd', 'company')->get();
         if ($companyAd->count() > 0) {
             for ($i = 0; $i < count($companyAd); $i++) {
                 $companyAd[$i]['images'] = json_decode($companyAd[$i]['images'], true);
@@ -1527,19 +1533,41 @@ class ActivityController extends Controller
         $event = Event::where('id', $request->id)->first();
         $event['image'] = json_decode($event['image'], true);
 
-        if (isset($request->image)) {
-            for ($i = 0; $i < count($request->image); $i++) {
-                if ($request->hasFile('image')) {
-                    $imageName = rand() . time() . '.' . $request->image[$i]->extension();
-                    $request->image[$i]->move(public_path('events'), $imageName);
-                    $imageName = asset('events') . '/' . $imageName;
-                    $getimageName[$i] = $imageName;
+        if (!empty($request->images)) {
+
+            for ($i = 0; $i < count($request->images); $i++) {
+                if ($request->hasFile('images')) {
+                    $imageName = rand() . time() . '.' . $request->images[$i]->extension();
+                    $request->images[$i]->move(public_path('events'), $imageName);
+                    $getimageName[$i] = url('events') . '/' . $imageName;
+                    if (file_exists($getimageName[$i])) {
+                        unlink($getimageName[$i]);
+                    }
+
                 }
             }
-            $imageName = json_encode($getimageName);
+            if (empty($request->imagesUrl)) {
+                $imageName = $getimageName;
+            } else {
+                $imageName = array_merge($getimageName, $request->imagesUrl);
+            }
+
         } else {
-            $imageName = null;
+            $imageName = $request->imagesUrl;
         }
+        // if (isset($request->image)) {
+        //     for ($i = 0; $i < count($request->image); $i++) {
+        //         if ($request->hasFile('image')) {
+        //             $imageName = rand() . time() . '.' . $request->image[$i]->extension();
+        //             $request->image[$i]->move(public_path('events'), $imageName);
+        //             $imageName = asset('events') . '/' . $imageName;
+        //             $getimageName[$i] = $imageName;
+        //         }
+        //     }
+        //     $imageName = json_encode($getimageName);
+        // } else {
+        //     $imageName = null;
+        // }
         $data = [
             'name' => $request->name ? $request->name : $event['name'],
             'image' => $request->image ? $imageName : $event['image'],

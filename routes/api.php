@@ -68,7 +68,7 @@ Route::post('/removeDislikeCompany', 'App\Http\Controllers\Api\ActivityControlle
 Route::post('/addCompanyAd', 'App\Http\Controllers\Api\ActivityController@addCompanyAd')->middleware('auth:sanctum');
 Route::post('/updateCompanyAd', 'App\Http\Controllers\Api\ActivityController@updateCompanyAd')->middleware('auth:sanctum');
 Route::post('/deleteCompanyAd', 'App\Http\Controllers\Api\ActivityController@deleteCompanyAd')->middleware('auth:sanctum');
-Route::get('/getCompanyAd', 'App\Http\Controllers\Api\ActivityController@getCompanyAd')->middleware('auth:sanctum');
+Route::post('/getCompanyAd', 'App\Http\Controllers\Api\ActivityController@getCompanyAd')->middleware('auth:sanctum');
 Route::post('/addSubAd', 'App\Http\Controllers\Api\ActivityController@addSubAd')->middleware('auth:sanctum');
 Route::post('/updateSubAd', 'App\Http\Controllers\Api\ActivityController@updateSubAd')->middleware('auth:sanctum');
 Route::post('/deleteCompanySubAd', 'App\Http\Controllers\Api\ActivityController@deleteCompanySubAd')->middleware('auth:sanctum');
