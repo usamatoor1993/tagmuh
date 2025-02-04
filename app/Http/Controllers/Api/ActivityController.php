@@ -178,11 +178,11 @@ class ActivityController extends Controller
     }
     public function getVerifiedCompany()
     {
-        $user = Company::where(['is_verified' => 1])->get();
-        if ($user->count() > 0) {
-            return response(['status' => 'success', 'code' => 200, 'user' => $user, 'message' => 'Get Company Successfully'], 200);
+        $data = Company::where(['is_verified' => 1])->get();
+        if ($data->count() > 0) {
+            return response(['status' => 'success', 'code' => 200, 'data' => $data, 'message' => 'Get Company Successfully'], 200);
         } else {
-            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Company Not Found']);
+            return response(['status' => 'error', 'code' => 403,  'data' => null, 'message' => 'Company Not Found']);
         }
     }
 
@@ -195,7 +195,7 @@ class ActivityController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $user = Company::where('category', $request->id)->get();
+        $user = Company::where('category', $request->id)->with('user')->get();
 
         if ($user->count() > 0) {
             for ($i = 0; $i < $user->count(); $i++) {
@@ -216,9 +216,9 @@ class ActivityController extends Controller
                     $user[$i]['dislikesCount'] = 0;
                 }
             }
-            return response(['status' => 'success', 'code' => 200, 'user' => $user, 'message' => 'Get Company Successfully'], 200);
+            return response(['status' => 'success', 'code' => 200, 'data' => $user, 'message' => 'Get Company Successfully'], 200);
         } else {
-            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Company Not Found']);
+            return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Company Not Found']);
         }
     }
 
@@ -1972,6 +1972,22 @@ class ActivityController extends Controller
             }
         } else {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Event not found'], 403);
+        }
+    }
+
+    public function getAllSponserCompanyAd(){
+        $companyAd = CompanyAd::where('status',1)->with('subAd', 'company')->get();
+        if ($companyAd->count() > 0) {
+            foreach ($companyAd as $companyAds) {
+                $companyAds['images'] = json_decode($companyAds['images'], true);
+                $companyAds['subAd'] = CompanySubAd::where('company_ad_id', $companyAds['id'])->get();
+                for ($j = 0; $j < count($companyAds['subAd']); $j++) {
+                    $companyAds['subAd'][$j]['images'] = json_decode($companyAds['subAd'][$j]['images'], true);
+                }
+            }
+            return response(['status' => 'success', 'code' => 200, 'data' => $companyAd, 'message' => 'Get Company Ad  Detail Successfully'], 200);
+        } else {
+            return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Get Company Ad Detail Failed'], 403);
         }
     }
 }
