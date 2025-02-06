@@ -735,7 +735,7 @@ class ActivityController extends Controller
         if ($portfolio->count() > 0) {
             return response(['status' => 'success', 'code' => 200, 'data' => $portfolio, 'message' => 'Get Portfolio Successfully'], 200);
         } else {
-            return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Get Portfolio Failed']);
+            return response(['status' => 'error', 'code' => 403, 'data' => [], 'message' => 'Get Portfolio Failed']);
         }
     }
     public function getPortfolioById(Request $request)
@@ -1338,27 +1338,6 @@ class ActivityController extends Controller
             return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Get Company Sub Ad Detail Failed'], 403);
         }
     }
-
-    // public function getCompanySubAdByCompanyAd(Request $request)
-    // {
-    //     $validator = Validator::make($request->all(), [
-    //         'id' => 'required|numeric|exists:company_ads,id',
-    //     ]);
-    //     if ($validator->fails()) {
-    //         return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
-    //     }
-    //     $companySubAd = CompanySubAd::where('company_ad_id', $request->id)->get();
-    //     if ($companySubAd->count() > 0) {
-
-    //         for ($j = 0; $j < count($companySubAd); $j++) {
-    //             $companySubAd[$j]['images'] = json_decode($companySubAd[$j]['images'], true);
-    //         }
-
-    //         return response(['status' => 'success', 'code' => 200, 'data' => $companySubAd, 'message' => 'Get Company Sub Ad  Detail Successfully'], 200);
-    //     } else {
-    //         return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Get Company Sub Ad Detail Failed'], 403);
-    //     }
-    // }
     public function getCompanyAdDetail(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -1974,15 +1953,18 @@ class ActivityController extends Controller
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'Event not found'], 403);
         }
     }
-
+    
     public function getAllSponserCompanyAd(){
-        $companyAd = CompanyAd::where('status',1)->with('subAd', 'company')->get();
+        $companyAd = CompanyAd::where('status',1)->with('company')->get();
         if ($companyAd->count() > 0) {
             foreach ($companyAd as $companyAds) {
                 $companyAds['images'] = json_decode($companyAds['images'], true);
-                $companyAds['subAd'] = CompanySubAd::where('company_ad_id', $companyAds['id'])->get();
-                for ($j = 0; $j < count($companyAds['subAd']); $j++) {
-                    $companyAds['subAd'][$j]['images'] = json_decode($companyAds['subAd'][$j]['images'], true);
+                 $companyAds['company']['likes'] = json_decode($companyAds['company']['likes'], true);
+                 $companyAds['company']['dislikes'] = json_decode($companyAds['company']['dislikes'], true);
+                $companyAds['sub_ad'] = CompanySubAd::where('company_ad_id', $companyAds['id'])->get();
+                
+                for ($j = 0; $j < count($companyAds['sub_ad']); $j++) {
+                    $companyAds['sub_ad'][$j]['images'] = json_decode($companyAds['sub_ad'][$j]['images'], true);
                 }
             }
             return response(['status' => 'success', 'code' => 200, 'data' => $companyAd, 'message' => 'Get Company Ad  Detail Successfully'], 200);
