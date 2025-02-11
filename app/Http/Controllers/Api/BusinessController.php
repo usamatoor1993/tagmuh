@@ -165,7 +165,6 @@ class BusinessController extends Controller
                     if (file_exists($getimageName[$i])) {
                         unlink($getimageName[$i]);
                     }
-
                 }
             }
             if (empty($request->imagesUrl)) {
@@ -180,7 +179,7 @@ class BusinessController extends Controller
         $portfolioAd = PortfolioAd::where('id', $request->portfolio_ad_id)->update([
             'name' => $request->name ? $request->name : $portfolioAd->name,
             'description' => $request->description ? $request->description : $portfolioAd->description,
-            'images' => $request->images ? $imageName : $portfolioAd->images,
+            'images' =>  $imageName ?? $portfolioAd->images,
             'price' => $request->price ? $request->price : $portfolioAd->price,
             'total_quantity' => $request->total_quantity ? $request->total_quantity : $portfolioAd->total_quantity,
         ]);

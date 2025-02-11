@@ -38,4 +38,9 @@ class Company extends Model
     {
         return $this->hasMany(Portfolio::class,'company_id');
     }
+    public function category()
+    {
+        return $this->belongsTo(Service::class,'category');
+    }
+    
 }

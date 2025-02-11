@@ -26,6 +26,7 @@ class ActivityController extends Controller
         $validator = Validator::make($request->all(), [
             // 'user_id' => 'required|numeric|exists:users,id',
             'email' => 'required|unique:companies,email',
+            'name' => 'required|unique:companies,name',
             'address' => 'required',
             'store_hours' => 'required',
             'category' => 'required',
@@ -98,7 +99,7 @@ class ActivityController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'id' => 'required|numeric|exists:companies,id',
-            'name' => 'unique:companies,name',
+            'name' => 'unique:companies,name,'.$request->id,
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
@@ -746,8 +747,8 @@ class ActivityController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $portfolio = Portfolio::where('id', $request->id)->get();
-        if ($portfolio->count() > 0) {
+        $portfolio = Portfolio::where('id', $request->id)->first();
+        if ($portfolio) {
             return response(['status' => 'success', 'code' => 200, 'data' => $portfolio, 'message' => 'Get Portfolio Successfully'], 200);
         } else {
             return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Get Portfolio Failed']);
@@ -763,11 +764,16 @@ class ActivityController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
+        $user=auth()->user();
+        $bank = BankDetails::where('user_id', $user->id)->first();
+        if ($bank) {
+            return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Bank Details Already Added']);
+        }
         $data = [
             'bank_name' => $request->bank_name,
             'account_name' => $request->account_name,
             'account_number' => $request->account_number,
-            'user_id' => auth()->user()->id,
+            'user_id' => $user->id,
         ];
         $bank = BankDetails::create($data);
         if (isset($bank)) {
@@ -1591,7 +1597,7 @@ class ActivityController extends Controller
         // }
         $data = [
             'name' => $request->name ? $request->name : $event['name'],
-            'image' => $request->image ? $imageName : $event['image'],
+            'image' =>  $imageName ?? $event['image'],
             'description' => $request->description ? $request->description : $event['description'],
             'date' => $request->date ? $request->date : $event['date'],
             'time' => $request->time ? $request->time : $event['time'],
@@ -1796,7 +1802,7 @@ class ActivityController extends Controller
                 $json = json_decode($event['going'], true);
                 $event['going'] = $json;
                 $count = count($json);
-                return response(['status' => 'success', 'code' => 200, 'data' => $event, 'likescount' => $count, 'message' => 'Event'], 200);
+                return response(['status' => 'success', 'code' => 200, 'data' => $event, 'goingCount' => $count, 'message' => 'Event'], 200);
             } else {
 
                 $jsonGoing = $event['going'];
@@ -1861,7 +1867,7 @@ class ActivityController extends Controller
                         $count = count($json);
                     }
 
-                    return response(['status' => 'success', 'code' => 200, 'data' => $event, 'goingsCount' => $count ? $count : null, 'message' => 'Event'], 200);
+                    return response(['status' => 'success', 'code' => 200, 'data' => $event, 'goingCount' => $count ? $count : null, 'message' => 'Event'], 200);
                 } else {
                     return response(['status' => 'success', 'code' => 403, 'data' => $likes, 'message' => 'Going not found'], 403);
                 }
@@ -1980,14 +1986,14 @@ class ActivityController extends Controller
         if ($companyAd->count() > 0) {
             foreach ($companyAd as $companyAds) {
                 $companyAds['images'] = json_decode($companyAds['images'], true);
-                $companyAds['subAd'] = CompanySubAd::where('company_ad_id', $companyAds['id'])->get();
+                // $companyAds['subAd'] = CompanySubAd::where('company_ad_id', $companyAds['id'])->get();
                 for ($j = 0; $j < count($companyAds['subAd']); $j++) {
                     $companyAds['subAd'][$j]['images'] = json_decode($companyAds['subAd'][$j]['images'], true);
                 }
             }
             return response(['status' => 'success', 'code' => 200, 'data' => $companyAd, 'message' => 'Get Company Ad  Detail Successfully'], 200);
         } else {
-            return response(['status' => 'success', 'code' => 403, 'data' => null, 'message' => 'Get Company Ad Detail Failed'], 403);
+            return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Get Company Ad Detail Failed'], 403);
         }
     }
 }
