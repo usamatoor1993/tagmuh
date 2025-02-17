@@ -186,9 +186,9 @@ class GuestController extends Controller
             'email' => 'required|email',
             'adults' => 'required',
             'date' => 'required',
-            'timeAvailable' => 'required',
+            // 'timeAvailable' => 'required',
             'time' => 'required',
-            'platform' => 'required',
+            // 'platform' => 'required',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
@@ -201,7 +201,7 @@ class GuestController extends Controller
             'childern' => $request->childern,
             'description' => $request->description,
             'date' => $request->date,
-            'timeAvailable' => $request->timeAvailable,
+            'time' => $request->time,
             'platform' => $request->platform,
             'link' => $request->link,
         ];

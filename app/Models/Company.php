@@ -42,5 +42,10 @@ class Company extends Model
     {
         return $this->belongsTo(Service::class,'category');
     }
+
+    public function company_ad()
+    {
+        return $this->hasMany(CompanyAd::class,'company_id');
+    }
     
 }

@@ -32,4 +32,5 @@ class CompanyAd extends Model
     {
         return $this->belongsTo(Company::class, 'company_id');
     }
+    
 }

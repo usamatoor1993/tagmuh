@@ -99,7 +99,7 @@ class ActivityController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'id' => 'required|numeric|exists:companies,id',
-            'name' => 'unique:companies,name,'.$request->id,
+            'name' => 'unique:companies,name,' . $request->id,
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
@@ -258,8 +258,11 @@ class ActivityController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $user = Company::where('id', $request->id)->with('user', 'employee', 'portfolio')->first();
+        $user = Company::where('id', $request->id)->with('user', 'employee', 'portfolio', 'company_ad')->first();
         if ($user) {
+            foreach ($user->company_ad as $companyAd) {
+                $companyAd['images'] = json_decode($companyAd['images'], true);
+            }
             if (!empty($user['likes'])) {
                 $json = json_decode($user['likes'], true);
                 $user['likes'] = $json;
@@ -764,7 +767,7 @@ class ActivityController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $user=auth()->user();
+        $user = auth()->user();
         $bank = BankDetails::where('user_id', $user->id)->first();
         if ($bank) {
             return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Bank Details Already Added']);
@@ -1206,7 +1209,7 @@ class ActivityController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $companyAd = CompanyAd::where('company_id',$request->company_id)->with('subAd', 'company')->get();
+        $companyAd = CompanyAd::where('company_id', $request->company_id)->with('subAd', 'company')->get();
         if ($companyAd->count() > 0) {
             for ($i = 0; $i < count($companyAd); $i++) {
                 $companyAd[$i]['images'] = json_decode($companyAd[$i]['images'], true);
@@ -1488,7 +1491,7 @@ class ActivityController extends Controller
             'description' => $request->description,
             'body' => 'This is for testing email using smtp.'
         ];
- 
+
         Mail::to($request->email)->send(new QuoteMail($data));
         return response(['status' => 'success', 'code' => 200, 'message' => "Email is sent successfully."], 200);
     }
@@ -1570,7 +1573,6 @@ class ActivityController extends Controller
                     if (file_exists($getimageName[$i])) {
                         unlink($getimageName[$i]);
                     }
-
                 }
             }
             if (empty($request->imagesUrl)) {
@@ -1578,7 +1580,6 @@ class ActivityController extends Controller
             } else {
                 $imageName = array_merge($getimageName, $request->imagesUrl);
             }
-
         } else {
             $imageName = $request->imagesUrl;
         }
@@ -1632,20 +1633,20 @@ class ActivityController extends Controller
 
     public function getAllEvents()
     {
-        $event = Event::with('user','company')->get();
+        $event = Event::with('user', 'company')->get();
         if ($event->count() > 0) {
             foreach ($event as $events) {
-        
+
                 $events['image'] = json_decode($events['image'], true);
                 $events['going'] = json_decode($events['going'], true);
                 $events['interested'] = json_decode($events['interested'], true);
-                
-                    $events['user']['id_card']=null;
+
+                $events['user']['id_card'] = null;
                 // if(!empty($idcard) || $idcard!=null ||  $idcard!=""){
                 // $idcard = json_decode($idcard, true);
                 // $events['user']['id_card']=$idcard;
                 // }
-                
+
                 $going = $events['going'];
                 $interested = $events['interested'];
                 if (!empty($going)) {
@@ -1658,7 +1659,6 @@ class ActivityController extends Controller
                 } else {
                     $events['interestedCount'] = 0;
                 }
-               
             }
             return response(['status' => 'success', 'code' => 200, 'data' => $event, 'message' => 'Get Event Successfully'], 200);
         } else {
@@ -1668,20 +1668,20 @@ class ActivityController extends Controller
 
     public function getAllMyEvents()
     {
-        $event = Event::where('user_id',auth()->user()->id)->with('company')->get();
+        $event = Event::where('user_id', auth()->user()->id)->with('company')->get();
         if ($event->count() > 0) {
             foreach ($event as $events) {
-        
+
                 $events['image'] = json_decode($events['image'], true);
                 $events['going'] = json_decode($events['going'], true);
                 $events['interested'] = json_decode($events['interested'], true);
-                
-                    $events['user']['id_card']=null;
+
+                $events['user']['id_card'] = null;
                 // if(!empty($idcard) || $idcard!=null ||  $idcard!=""){
                 // $idcard = json_decode($idcard, true);
                 // $events['user']['id_card']=$idcard;
                 // }
-                
+
                 $going = $events['going'];
                 $interested = $events['interested'];
                 if (!empty($going)) {
@@ -1709,7 +1709,7 @@ class ActivityController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
         }
-        $event = Event::where('id', $request->id)->with('user','company')->first();
+        $event = Event::where('id', $request->id)->with('user', 'company')->first();
         if ($event) {
 
             $event['image'] = json_decode($event['image'], true);
@@ -1981,8 +1981,9 @@ class ActivityController extends Controller
         }
     }
 
-    public function getAllSponserCompanyAd(){
-        $companyAd = CompanyAd::where('status',1)->with('subAd', 'company')->get();
+    public function getAllSponserCompanyAd()
+    {
+        $companyAd = CompanyAd::where('status', 1)->with('subAd', 'company')->get();
         if ($companyAd->count() > 0) {
             foreach ($companyAd as $companyAds) {
                 $companyAds['images'] = json_decode($companyAds['images'], true);

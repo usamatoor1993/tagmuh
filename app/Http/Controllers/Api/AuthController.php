@@ -22,7 +22,7 @@ class AuthController extends Controller
             'user_type' => 'required',
         ]);
         if ($validator->fails()) {
-            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'error' => $validator->errors(), 'message' => 'wrong or missing params'], 403);
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'error' => $validator->errors()->all(), 'message' => 'wrong or missing params'], 403);
         }
 
         $checkNumber = User::where('phone_number', $request->phone_number)->first();
@@ -50,7 +50,7 @@ class AuthController extends Controller
                 'business_license' => 'required',
             ]);
             if ($validator->fails()) {
-                return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'error' => $validator->errors(), 'message' => 'wrong or missing params'], 403);
+                return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'error' => $validator->errors()->all(), 'message' => 'wrong or missing params'], 403);
             }
            
 
@@ -215,7 +215,7 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
         if ($validator->fails()) {
-            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'missing or wrong params', 'errors' => $validator->errors()], 403);
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 403);
         }
         $check = User::where('email', $request->email)->first();
         if (!$check) {
@@ -245,7 +245,7 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()]);
+            return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()->all()]);
         }
         $credentials = request()->validate(['email' => 'required|email']);
 
