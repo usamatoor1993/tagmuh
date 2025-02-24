@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\IsAdmin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -111,3 +112,30 @@ Route::post('/updatePortfolioAd', 'App\Http\Controllers\Api\BusinessController@u
 Route::post('/deletePortfolioAd', 'App\Http\Controllers\Api\BusinessController@deletePortfolioAd')->middleware('auth:sanctum');
 Route::post('/getPortfolioAdByPortfolio', 'App\Http\Controllers\Api\BusinessController@getPortfolioAdByPortfolio')->middleware('auth:sanctum');
 Route::get('/getAllSponserCompanyAd', 'App\Http\Controllers\Api\ActivityController@getAllSponserCompanyAd')->middleware('auth:sanctum');
+Route::post('/addInvoice', 'App\Http\Controllers\Api\BusinessController@addInvoice')->middleware('auth:sanctum');
+Route::post('/updateInvoice', 'App\Http\Controllers\Api\BusinessController@updateInvoice')->middleware('auth:sanctum');
+Route::post('/deleteInvoice', 'App\Http\Controllers\Api\BusinessController@deleteInvoice')->middleware('auth:sanctum');
+Route::post('/getInvoiceByCompany', 'App\Http\Controllers\Api\BusinessController@getInvoiceByCompany')->middleware('auth:sanctum');
+
+
+
+///////////////////////// Admin Routes //////////////////////////
+Route::post('/adminLogin', 'App\Http\Controllers\Admin\AuthController@login');
+Route::post('/logout', 'App\Http\Controllers\Admin\AuthController@logout')->middleware('auth:sanctum');
+Route::middleware(IsAdmin::class)->group(function () {
+
+    Route::post('/dashboard', 'App\Http\Controllers\Admin\ActivityController@dashboard')->middleware('auth:sanctum');
+    Route::get('/getAllUser', 'App\Http\Controllers\Admin\ActivityController@getAllUser')->middleware('auth:sanctum');
+    Route::post('/activeBlock', 'App\Http\Controllers\Admin\ActivityController@activeBlock')->middleware('auth:sanctum');
+    Route::post('/alertMail', 'App\Http\Controllers\Admin\ActivityController@alertMail')->middleware('auth:sanctum');
+
+    Route::post('/addCategory', 'App\Http\Controllers\Admin\ActivityController@addCategory')->middleware('auth:sanctum');
+    Route::get('/getCategory', 'App\Http\Controllers\Admin\ActivityController@getCategory')->middleware('auth:sanctum');
+    Route::post('/deleteCategory', 'App\Http\Controllers\Admin\ActivityController@deleteCategory')->middleware('auth:sanctum');
+    Route::post('/updateCategory', 'App\Http\Controllers\Admin\ActivityController@updateCategory')->middleware('auth:sanctum');
+
+    Route::post('/updateSection', 'App\Http\Controllers\Admin\ActivityController@updateSection')->middleware('auth:sanctum');
+    Route::get('/getSection', 'App\Http\Controllers\Admin\ActivityController@getSection')->middleware('auth:sanctum');
+    Route::post('/selectCompany', 'App\Http\Controllers\Admin\ActivityController@selectCompany')->middleware('auth:sanctum');
+    Route::post('/eventPermission', 'App\Http\Controllers\Admin\ActivityController@eventPermission')->middleware('auth:sanctum');
+});

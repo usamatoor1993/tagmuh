@@ -151,6 +151,8 @@ class ActivityController extends Controller
             'profile_photo' =>  $request->profile_photo ? $imageName  : $getCompany['profile_photo'],
             'cover_photo' => $request->cover_photo ? $coverName : $getCompany['cover_photo'],
             'is_selected' => $request->is_selected ? $request->is_selected  : $getCompany['is_selected'],
+            'start_time' => $request->start_time ? $request->start_time  : $getCompany['start_time'],
+            'end_time' => $request->end_time ? $request->end_time  : $getCompany['end_time'],
 
 
         ];
@@ -258,10 +260,15 @@ class ActivityController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $user = Company::where('id', $request->id)->with('user', 'employee', 'portfolio', 'company_ad')->first();
+        $user = Company::where('id', $request->id)->with('user', 'employee', 'portfolio', 'company_ad','company_sub_ad')->first();
         if ($user) {
-            foreach ($user->company_ad as $companyAd) {
-                $companyAd['images'] = json_decode($companyAd['images'], true);
+            // foreach ($user->company_ad as $companyAd) {
+            //     $companyAd['images'] = json_decode($companyAd['images'], true);
+            // }
+            for ($j = 0; $j < count($user['company_sub_ad']); $j++) {
+                $user['company_ad'][$j]['images'] = json_decode($user['company_ad'][$j]['images'], true);
+
+                $user['company_sub_ad'][$j]['images'] = json_decode($user['company_sub_ad'][$j]['images'], true);
             }
             if (!empty($user['likes'])) {
                 $json = json_decode($user['likes'], true);
@@ -1981,20 +1988,20 @@ class ActivityController extends Controller
         }
     }
 
-    public function getAllSponserCompanyAd()
+    public function getAllSponserCompany()
     {
-        $companyAd = CompanyAd::where('status', 1)->with('subAd', 'company')->get();
-        if ($companyAd->count() > 0) {
-            foreach ($companyAd as $companyAds) {
-                $companyAds['images'] = json_decode($companyAds['images'], true);
-                // $companyAds['subAd'] = CompanySubAd::where('company_ad_id', $companyAds['id'])->get();
-                for ($j = 0; $j < count($companyAds['subAd']); $j++) {
-                    $companyAds['subAd'][$j]['images'] = json_decode($companyAds['subAd'][$j]['images'], true);
-                }
-            }
-            return response(['status' => 'success', 'code' => 200, 'data' => $companyAd, 'message' => 'Get Company Ad  Detail Successfully'], 200);
+        $company = Company::where('is_selected', 1)->get();
+        if ($company->count() > 0) {
+            // foreach ($company as $companies) {
+            //     // $companies['images'] = json_decode($companies['images'], true);
+            //     // $companyAds['subAd'] = CompanySubAd::where('company_ad_id', $companyAds['id'])->get();
+            //     for ($j = 0; $j < count($companies['company_sub_ad']); $j++) {
+            //         $companies['company_sub_ad'][$j]['images'] = json_decode($companies['company_sub_ad'][$j]['images'], true);
+            //     }
+            // }
+            return response(['status' => 'success', 'code' => 200, 'data' => $company, 'message' => 'Get Company Detail Successfully'], 200);
         } else {
-            return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Get Company Ad Detail Failed'], 403);
+            return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Get Company Detail Failed'], 403);
         }
     }
 }

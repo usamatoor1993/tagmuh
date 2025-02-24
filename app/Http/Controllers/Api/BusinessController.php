@@ -7,6 +7,7 @@ use App\Models\BusinessPermission;
 use App\Models\Company;
 use App\Models\Event;
 use App\Models\EventReview;
+use App\Models\Invoice;
 use App\Models\PortfolioAd;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -218,6 +219,106 @@ class BusinessController extends Controller
             return response(['status' => 'success', 'code' => 200, 'message' => 'Portfolio Ad list', 'data' => $portfolioAds], 200);
         } else {
             return response(['status' => 'error', 'code' => 422, 'message' => 'Portfolio Ad not found'], 422);
+        }
+    }
+
+
+    public function addInvoice(Request $request)
+    {
+        $validator = Validator::make($request->all
+        (), [
+            'user_id' => 'required|exists:users,id',
+            'company_id' => 'required|exists:companies,id',
+            'issue_date' => 'required',
+            'invoice_number' => 'required',
+            'company_name' => 'required',
+            'company_email' => 'required',
+            'company_address' => 'required',
+            'bank_name' => 'required',
+            'bank_code' => 'required',
+            'account_name' => 'required',
+            'account_number' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
+        }
+        $invoice = Invoice::create([
+            'user_id' => $request->user_id,
+            'company_id' => $request->company_id,
+            'issue_date' => $request->issue_date,
+            'invoice_number' => $request->invoice_number,
+            'company_name' => $request->company_name,
+            'company_email' => $request->company_email,
+            'company_address' => $request->company_address,
+            'bank_name' => $request->bank_name,
+            'bank_code' => $request->bank_code,
+            'account_name' => $request->account_name,
+            'account_number' => $request->account_number,
+        ]);
+        if (!$invoice) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'Invoice not added'], 422);
+        } else {
+            return response(['status' => 'success', 'code' => 200, 'message' => 'Invoice added successfully', 'data' => $invoice], 200);
+        }
+    }
+    public function updateInvoice(Request $request){
+        $validator = Validator::make($request->all(), [
+            'invoice_id' => 'required|exists:invoices,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
+        }
+        $invoice = Invoice::where('id', $request->invoice_id)->first();
+        if (!$invoice) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'Invoice not found'], 422);
+        }
+        $invoice = Invoice::where('id', $request->invoice_id)->update([
+            'issue_date' => $request->issue_date ? $request->issue_date : $invoice->issue_date,
+            'invoice_number' => $request->invoice_number ? $request->invoice_number : $invoice->invoice_number,
+            'company_name' => $request->company_name ? $request->company_name : $invoice->company_name,
+            'company_email' => $request->company_email ? $request->company_email : $invoice->company_email,
+            'company_address' => $request->company_address ? $request->company_address : $invoice->company_address,
+            'bank_name' => $request->bank_name ? $request->bank_name : $invoice->bank_name,
+            'bank_code' => $request->bank_code ? $request->bank_code : $invoice->bank_code,
+            'account_name' => $request->account_name ? $request->account_name : $invoice->account_name,
+            'account_number' => $request->account_number ? $request->account_number : $invoice->account_number,
+        ]);
+        if ($invoice == 1) {
+            return response(['status' => 'success', 'code' => 200, 'message' => 'Invoice updated successfully', 'data' => $invoice], 200);
+        } else {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'Invoice not updated'], 422);
+        }
+         
+    }
+
+    public function deleteInvoice(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'invoice_id' => 'required|exists:invoices,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
+        }
+        $invoice = Invoice::where('id', $request->invoice_id)->delete();
+        if ($invoice == 1) {
+            return response(['status' => 'success', 'code' => 200, 'message' => 'Invoice deleted successfully'], 200);
+        } else {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'Invoice not deleted'], 422);
+        }
+    }
+    public function getInvoiceByCompany(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'company_id' => 'required|exists:companies,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
+        }
+        $invoices = Invoice::where('company_id', $request->company_id)->get();
+        if ($invoices->count() > 0) {
+            return response(['status' => 'success', 'code' => 200, 'message' => 'Invoice list', 'data' => $invoices], 200);
+        } else {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'Invoice not found'], 422);
         }
     }
 }

@@ -24,6 +24,9 @@ class Company extends Model
        'dislikes',
        'rating',
        'is_selected',
+       'event_permission',
+       'start_time',
+       'end_time',
     ];
 
     public function user()
@@ -46,6 +49,11 @@ class Company extends Model
     public function company_ad()
     {
         return $this->hasMany(CompanyAd::class,'company_id');
+    }
+
+    public function company_sub_ad()
+    {
+        return $this->hasMany(CompanySubAd::class,'company_id');
     }
     
 }
