@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BusinessPermission;
 use App\Models\Company;
 use App\Models\Event;
+use App\Models\EventAd;
 use App\Models\EventReview;
 use App\Models\Invoice;
 use App\Models\PortfolioAd;
@@ -319,6 +320,120 @@ class BusinessController extends Controller
             return response(['status' => 'success', 'code' => 200, 'message' => 'Invoice list', 'data' => $invoices], 200);
         } else {
             return response(['status' => 'error', 'code' => 422, 'message' => 'Invoice not found'], 422);
+        }
+    }
+
+    public function addEventAd(Request $request){
+        $validator = Validator::make($request->all(), [
+            'event_id' => 'required|exists:events,id',
+            'title' => 'required',
+            'description' => 'required',
+            'images' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
+        }
+        if (!empty($request->images)) {
+            if (isset($request->images)) {
+                for ($i = 0; $i < count($request->images); $i++) {
+                    if ($request->hasFile('images')) {
+                        $imageName = rand() . time() . '.' . $request->images[$i]->extension();
+                        $request->images[$i]->move(public_path('eventAdImages'), $imageName);
+                        $getimageName[$i] = url('eventAdImages') . '/' . $imageName;
+                    }
+                }
+            } else {
+                $getimageName = null;
+            }
+        } else {
+            $getimageName = null;
+        }
+        $eventAd = EventAd::create([
+            'event_id' => $request->event_id,
+            'title' => $request->title,
+            'description' => $request->description,
+            'images' => $getimageName,
+        ]);
+        if (!$eventAd) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'Event Ad not added'], 422);
+        } else {
+            return response(['status' => 'success', 'code' => 200, 'message' => 'Event Ad added successfully', 'data' => $eventAd], 200);
+        }
+    }
+
+    public function updateEventAd(Request $request){
+        $validator = Validator::make($request->all(), [
+            'event_ad_id' => 'required|exists:event_ads,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
+        }
+        $eventAd = EventAd::where('id', $request->event_ad_id)->first();
+        if (!$eventAd) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'Event Ad not found'], 422);
+        }
+        if (!empty($request->images)) {
+
+            for ($i = 0; $i < count($request->images); $i++) {
+                if ($request->hasFile('images')) {
+                    $imageName = rand() . time() . '.' . $request->images[$i]->extension();
+                    $request->images[$i]->move(public_path('eventAdImages'), $imageName);
+                    $getimageName[$i] = url('eventAdImages') . '/' . $imageName;
+                    if (file_exists($getimageName[$i])) {
+                        unlink($getimageName[$i]);
+                    }
+                }
+            }
+            if (empty($request->imagesUrl)) {
+                $imageName = $getimageName;
+            } else {
+                $imageName = array_merge($getimageName, $request->imagesUrl);
+            }
+
+        } else {
+            $imageName = $request->imagesUrl;
+        }
+        $eventAd = EventAd::where('id', $request->event_ad_id)->update([
+            'title' => $request->title ? $request->title : $eventAd->title,
+            'description' => $request->description ? $request->description : $eventAd->description,
+            'images' =>  $imageName ?? $eventAd->images,
+        ]);
+        if ($eventAd == 1) {
+            $eventAd = EventAd::where('id', $request->event_ad_id)->first();
+            return response(['status' => 'success', 'code' => 200, 'message' => 'Event Ad updated successfully', 'data' => $eventAd], 200);
+        } else {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'Event Ad not updated'], 422);
+        }
+    }
+
+    public function deleteEventAd(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'event_ad_id' => 'required|exists:event_ads,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
+        }
+        $eventAd = EventAd::where('id', $request->event_ad_id)->delete();
+        if ($eventAd == 1) {
+            return response(['status' => 'success', 'code' => 200, 'message' => 'Event Ad deleted successfully'], 200);
+        } else {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'Event Ad not deleted'], 422);
+        }
+    }
+    public function getEventAdByEvent(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'event_id' => 'required|exists:events,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
+        }
+        $eventAds = EventAd::where('event_id', $request->event_id)->get();
+        if ($eventAds->count() > 0) {
+            return response(['status' => 'success', 'code' => 200, 'message' => 'Event Ad list', 'data' => $eventAds], 200);
+        } else {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'Event Ad not found'], 422);
         }
     }
 }

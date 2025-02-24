@@ -117,6 +117,12 @@ Route::post('/updateInvoice', 'App\Http\Controllers\Api\BusinessController@updat
 Route::post('/deleteInvoice', 'App\Http\Controllers\Api\BusinessController@deleteInvoice')->middleware('auth:sanctum');
 Route::post('/getInvoiceByCompany', 'App\Http\Controllers\Api\BusinessController@getInvoiceByCompany')->middleware('auth:sanctum');
 
+Route::post('/addEventAd', 'App\Http\Controllers\Api\BusinessController@addEventAd')->middleware('auth:sanctum');
+Route::post('/updateEventAd', 'App\Http\Controllers\Api\BusinessController@updateEventAd')->middleware('auth:sanctum');
+Route::post('/deleteEventAd', 'App\Http\Controllers\Api\BusinessController@deleteEventAd')->middleware('auth:sanctum');
+Route::post('/getEventAdByEvent', 'App\Http\Controllers\Api\BusinessController@getEventAdByEvent')->middleware('auth:sanctum');
+
+
 
 
 ///////////////////////// Admin Routes //////////////////////////
