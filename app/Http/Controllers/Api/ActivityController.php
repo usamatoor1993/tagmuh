@@ -154,7 +154,6 @@ class ActivityController extends Controller
             'start_time' => $request->start_time ? $request->start_time  : $getCompany['start_time'],
             'end_time' => $request->end_time ? $request->end_time  : $getCompany['end_time'],
 
-
         ];
         $company = Company::where('id', $request->id)->update($data);
         if ($company == 1) {
@@ -260,7 +259,7 @@ class ActivityController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $user = Company::where('id', $request->id)->with('user', 'employee', 'portfolio', 'company_ad','company_sub_ad')->first();
+        $user = Company::where('id', $request->id)->with('user', 'employee', 'portfolio', 'company_ad', 'company_sub_ad')->first();
         if ($user) {
             // foreach ($user->company_ad as $companyAd) {
             //     $companyAd['images'] = json_decode($companyAd['images'], true);
@@ -1992,13 +1991,13 @@ class ActivityController extends Controller
     {
         $company = Company::where('is_selected', 1)->get();
         if ($company->count() > 0) {
-            // foreach ($company as $companies) {
-            //     // $companies['images'] = json_decode($companies['images'], true);
-            //     // $companyAds['subAd'] = CompanySubAd::where('company_ad_id', $companyAds['id'])->get();
-            //     for ($j = 0; $j < count($companies['company_sub_ad']); $j++) {
-            //         $companies['company_sub_ad'][$j]['images'] = json_decode($companies['company_sub_ad'][$j]['images'], true);
-            //     }
-            // }
+            foreach ($company as $companies) {
+                // $companies['images'] = json_decode($companies['images'], true);
+                // $companyAds['subAd'] = CompanySubAd::where('company_ad_id', $companyAds['id'])->get();
+                for ($j = 0; $j < count($companies['company_sub_ad']); $j++) {
+                    $companies['company_sub_ad'][$j]['images'] = json_decode($companies['company_sub_ad'][$j]['images'], true);
+                }
+            }
             return response(['status' => 'success', 'code' => 200, 'data' => $company, 'message' => 'Get Company Detail Successfully'], 200);
         } else {
             return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Get Company Detail Failed'], 403);
