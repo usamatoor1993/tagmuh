@@ -112,6 +112,7 @@ Route::post('/updatePortfolioAd', 'App\Http\Controllers\Api\BusinessController@u
 Route::post('/deletePortfolioAd', 'App\Http\Controllers\Api\BusinessController@deletePortfolioAd')->middleware('auth:sanctum');
 Route::post('/getPortfolioAdByPortfolio', 'App\Http\Controllers\Api\BusinessController@getPortfolioAdByPortfolio')->middleware('auth:sanctum');
 Route::get('/getAllSponserCompanyAd', 'App\Http\Controllers\Api\ActivityController@getAllSponserCompanyAd')->middleware('auth:sanctum');
+
 Route::post('/addInvoice', 'App\Http\Controllers\Api\BusinessController@addInvoice')->middleware('auth:sanctum');
 Route::post('/updateInvoice', 'App\Http\Controllers\Api\BusinessController@updateInvoice')->middleware('auth:sanctum');
 Route::post('/deleteInvoice', 'App\Http\Controllers\Api\BusinessController@deleteInvoice')->middleware('auth:sanctum');

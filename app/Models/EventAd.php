@@ -18,4 +18,8 @@ class EventAd extends Model
     {
         return $this->belongsTo(Event::class,'event_id');
     }
+
+    protected $casts = [
+        'images' => 'array',
+    ];
 }
