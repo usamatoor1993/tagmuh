@@ -198,7 +198,7 @@ class ActivityController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $user = Company::where('category', $request->id)->with('user','category')->get();
+        $user = Company::where('category', $request->id)->with('user','category','portfolio','employee')->get();
 
         if ($user->count() > 0) {
             for ($i = 0; $i < $user->count(); $i++) {
