@@ -184,26 +184,31 @@ class GuestController extends Controller
             'name' => 'required',
             'contact' => 'required',
             'email' => 'required|email',
-            'adults' => 'required',
-            'date' => 'required',
+            'item_id' => 'required',
+            'item_name' => 'required',
+            'description' => 'required',
+            'total_price' => 'required',
+            'quantity' => 'required',
+            // 'adults' => 'required',
+            // 'date' => 'required',
             // 'timeAvailable' => 'required',
-            'time' => 'required',
+            // 'time' => 'required',
             // 'platform' => 'required',
         ]);
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
         }
+
+
         $data = [
             'name' => $request->name,
             'contact' => $request->contact,
             'email' => $request->email,
-            'adults' => $request->adults,
-            'childern' => $request->childern,
+            'item_id' => $request->item_id,
+            'item_name' => $request->item_name,
             'description' => $request->description,
-            'date' => $request->date,
-            'time' => $request->time,
-            'platform' => $request->platform,
-            'link' => $request->link,
+            'total_price' => $request->total_price,
+            'quantity' => $request->quantity,
         ];
 
         Mail::to($request->email)->send(new BookingMail($data));
@@ -224,8 +229,8 @@ class GuestController extends Controller
         $from = $request->start_date;
         $to = $request->end_date;
         $event = Event::whereBetween('date', [$from, $to])->get();
-        if ($event ->count()>0) {
-            return response(['status' => 'success', 'code' => 200,'event', 'message' => 'Event Get Successfully'], 200);
+        if ($event->count() > 0) {
+            return response(['status' => 'success', 'code' => 200, 'event', 'message' => 'Event Get Successfully'], 200);
         } else {
             return response(['status' => 'error', 'code' => 403, 'data' => null, 'message' => 'Event Get Failed']);
         }

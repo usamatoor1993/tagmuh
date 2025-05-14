@@ -283,6 +283,7 @@ class BusinessController extends Controller
             'bank_code' => $request->bank_code ? $request->bank_code : $invoice->bank_code,
             'account_name' => $request->account_name ? $request->account_name : $invoice->account_name,
             'account_number' => $request->account_number ? $request->account_number : $invoice->account_number,
+            'status' => $request->status ? $request->status : $invoice->status,
         ]);
         if ($invoice == 1) {
             return response(['status' => 'success', 'code' => 200, 'message' => 'Invoice updated successfully', 'data' => $invoice], 200);
@@ -434,6 +435,40 @@ class BusinessController extends Controller
             return response(['status' => 'success', 'code' => 200, 'message' => 'Event Ad list', 'data' => $eventAds], 200);
         } else {
             return response(['status' => 'error', 'code' => 422, 'message' => 'Event Ad not found'], 422);
+        }
+    }
+
+    public function getCompanyByUserId(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|exists:users,id',
+        ]);
+        if ($validator->fails()) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
+        }
+        $company = Company::where('user_id', $request->user_id)->with('category')->get();
+        if ($company->count() > 0) {
+            for ($i = 0; $i < $company->count(); $i++) {
+                if (!empty($company[$i]['likes'])) {
+                    $json = json_decode($company[$i]['likes'], true);
+                    $company[$i]['likes'] = $json;
+                    $company[$i]['likesCount'] = count($json);
+                } else {
+                    $company[$i]['likes'] = [];
+                    $company[$i]['likesCount'] = 0;
+                }
+                if (!empty($company[$i]['dislikes'])) {
+                    $json = json_decode($company[$i]['dislikes'], true);
+                    $company[$i]['dislikes'] = $json;
+                    $company[$i]['dislikesCount'] = count($json);
+                } else {
+                    $company[$i]['dislikes'] = [];
+                    $company[$i]['dislikesCount'] = 0;
+                }
+            }
+            return response(['status' => 'success', 'code' => 200, 'message' => 'Company found', 'data' => $company], 200);
+        } else {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'Company not found'], 422);
         }
     }
 }

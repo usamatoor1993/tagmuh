@@ -111,7 +111,7 @@ Route::post('/addPortfolioAd', 'App\Http\Controllers\Api\BusinessController@addP
 Route::post('/updatePortfolioAd', 'App\Http\Controllers\Api\BusinessController@updatePortfolioAd')->middleware('auth:sanctum');
 Route::post('/deletePortfolioAd', 'App\Http\Controllers\Api\BusinessController@deletePortfolioAd')->middleware('auth:sanctum');
 Route::post('/getPortfolioAdByPortfolio', 'App\Http\Controllers\Api\BusinessController@getPortfolioAdByPortfolio')->middleware('auth:sanctum');
-Route::get('/getAllSponserCompanyAd', 'App\Http\Controllers\Api\ActivityController@getAllSponserCompanyAd')->middleware('auth:sanctum');
+Route::get('/getAllSponserCompany', 'App\Http\Controllers\Api\ActivityController@getAllSponserCompany')->middleware('auth:sanctum');
 
 Route::post('/addInvoice', 'App\Http\Controllers\Api\BusinessController@addInvoice')->middleware('auth:sanctum');
 Route::post('/updateInvoice', 'App\Http\Controllers\Api\BusinessController@updateInvoice')->middleware('auth:sanctum');
@@ -122,8 +122,12 @@ Route::post('/addEventAd', 'App\Http\Controllers\Api\BusinessController@addEvent
 Route::post('/updateEventAd', 'App\Http\Controllers\Api\BusinessController@updateEventAd')->middleware('auth:sanctum');
 Route::post('/deleteEventAd', 'App\Http\Controllers\Api\BusinessController@deleteEventAd')->middleware('auth:sanctum');
 Route::post('/getEventAdByEvent', 'App\Http\Controllers\Api\BusinessController@getEventAdByEvent')->middleware('auth:sanctum');
+Route::post('getCompanyByUserId', 'App\Http\Controllers\Api\BusinessController@getCompanyByUserId')->middleware('auth:sanctum');
 
-
+Route::post('/add-stream', 'App\Http\Controllers\Api\StreamController@startStream')->middleware('auth:sanctum');
+Route::post('/stop-stream', 'App\Http\Controllers\Api\StreamController@stopStream')->middleware('auth:sanctum');
+Route::get('/get-all-live-streams', 'App\Http\Controllers\Api\StreamController@getAllLiveStreams')->middleware('auth:sanctum');
+Route::post('join-stream', 'App\Http\Controllers\Api\StreamController@viewStream')->middleware('auth:sanctum');
 
 
 ///////////////////////// Admin Routes //////////////////////////
@@ -142,7 +146,7 @@ Route::middleware(IsAdmin::class)->group(function () {
     Route::post('/updateCategory', 'App\Http\Controllers\Admin\ActivityController@updateCategory')->middleware('auth:sanctum');
 
     Route::post('/updateSection', 'App\Http\Controllers\Admin\ActivityController@updateSection')->middleware('auth:sanctum');
-    Route::get('/getSection', 'App\Http\Controllers\Admin\ActivityController@getSection')->middleware('auth:sanctum');
     Route::post('/selectCompany', 'App\Http\Controllers\Admin\ActivityController@selectCompany')->middleware('auth:sanctum');
     Route::post('/eventPermission', 'App\Http\Controllers\Admin\ActivityController@eventPermission')->middleware('auth:sanctum');
 });
+Route::get('/getSection', 'App\Http\Controllers\Admin\ActivityController@getSection')->middleware('auth:sanctum');

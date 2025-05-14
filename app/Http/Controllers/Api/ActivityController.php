@@ -31,7 +31,7 @@ class ActivityController extends Controller
             'store_hours' => 'required',
             'category' => 'required',
             // 'reel' => 'required',
-            'web_link' => 'required',
+            // 'web_link' => 'required',
             'image' => 'required',
             'cover_photo' => 'required',
             'is_selected' => 'required',
@@ -153,6 +153,7 @@ class ActivityController extends Controller
             'is_selected' => $request->is_selected ? $request->is_selected  : $getCompany['is_selected'],
             'start_time' => $request->start_time ? $request->start_time  : $getCompany['start_time'],
             'end_time' => $request->end_time ? $request->end_time  : $getCompany['end_time'],
+            'is_verified' => $request->is_verified ? $request->is_verified  : $getCompany['is_verified'],
 
         ];
         $company = Company::where('id', $request->id)->update($data);
@@ -197,7 +198,7 @@ class ActivityController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $user = Company::where('category', $request->id)->with('user')->get();
+        $user = Company::where('category', $request->id)->with('user','category')->get();
 
         if ($user->count() > 0) {
             for ($i = 0; $i < $user->count(); $i++) {
@@ -226,7 +227,7 @@ class ActivityController extends Controller
 
     public function getCompanies()
     {
-        $user = Company::with('user', 'employee', 'portfolio')->get();
+        $user = Company::with('user', 'employee', 'portfolio','category')->get();
         if ($user->count() > 0) {
             for ($i = 0; $i < $user->count(); $i++) {
                 if (!empty($user[$i]['likes'])) {
@@ -259,7 +260,7 @@ class ActivityController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 403, 'user' => null, 'data' => null, 'message' => $validator->errors()], 403);
         }
-        $user = Company::where('id', $request->id)->with('user', 'employee', 'portfolio', 'company_ad', 'company_sub_ad')->first();
+        $user = Company::where('id', $request->id)->with('user', 'employee', 'portfolio', 'company_ad', 'company_sub_ad','category')->first();
         if ($user) {
             // foreach ($user->company_ad as $companyAd) {
             //     $companyAd['images'] = json_decode($companyAd['images'], true);
