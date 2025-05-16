@@ -132,7 +132,7 @@ class ActivityController extends Controller
         if (isset($request->reel)) {
             if ($request->hasFile('reel')) {
                 $reelName = rand() . time() . '.' . $request->reel->extension();
-                $request->reel->move(public_path('reel'), $reelName);
+                $request->reel->move(public_path('reels'), $reelName);
                 $reelName = asset('reels') . '/' . $reelName;
             } else {
                 return response(['status' => 'unsuccessful', 'code' => 422, 'message' => 'Reel should be file'], 422);
@@ -146,9 +146,9 @@ class ActivityController extends Controller
             'address' => $request->address ? $request->address  : $getCompany['address'],
             'store_hours' => $request->store_hours ? $request->store_hours  : $getCompany['store_hours'],
             'category' => $request->category ? $request->category  : $getCompany['category'],
-            'reels' =>  $request->reels ? $reelName  : $getCompany['reels'],
+            'reels' =>  $request->reel ? $reelName  : $getCompany['reels'],
             'web_link' => $request->web_link ? $request->web_link  : $getCompany['web_link'],
-            'profile_photo' =>  $request->profile_photo ? $imageName  : $getCompany['profile_photo'],
+            'profile_photo' =>  $request->image ? $imageName  : $getCompany['profile_photo'],
             'cover_photo' => $request->cover_photo ? $coverName : $getCompany['cover_photo'],
             'is_selected' => $request->is_selected ? $request->is_selected  : $getCompany['is_selected'],
             'start_time' => $request->start_time ? $request->start_time  : $getCompany['start_time'],
@@ -158,7 +158,8 @@ class ActivityController extends Controller
         ];
         $company = Company::where('id', $request->id)->update($data);
         if ($company == 1) {
-            return response(['status' => 'success', 'code' => 200,  'message' => 'Update Company Successfully'], 200);
+            $company = Company::where('id', $request->id)->first();
+            return response(['status' => 'success', 'code' => 200,'company' => $company,   'message' => 'Update Company Successfully'], 200);
         } else {
             return response(['status' => 'error', 'code' => 403, 'company' => null, 'data' => null, 'message' => 'Update Company Failed']);
         }
