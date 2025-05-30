@@ -134,6 +134,7 @@ Route::post('give-permission', 'App\Http\Controllers\Api\BusinessController@give
 ///////////////////////// Admin Routes //////////////////////////
 Route::post('/adminLogin', 'App\Http\Controllers\Admin\AuthController@login');
 Route::post('/logout', 'App\Http\Controllers\Admin\AuthController@logout')->middleware('auth:sanctum');
+Route::post('get-company-by-employee-id', 'App\Http\Controllers\Api\BusinessController@getCompanyByEmployeeId')->middleware('auth:sanctum');
 Route::middleware(IsAdmin::class)->group(function () {
 
     Route::post('/dashboard', 'App\Http\Controllers\Admin\ActivityController@dashboard')->middleware('auth:sanctum');
