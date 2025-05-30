@@ -283,7 +283,7 @@ class AuthController extends Controller
         if (isset($id)) {
             $check = is_numeric($id);
             if ($check == 1) {
-                $user = User::where('id', $id)->first();
+                $user = User::where('id', $id)->with('permissions')->first();
                 if ($user) {
                     if($user['id_card']!=null){
                         $user['id_card'] = json_decode($user['id_card'], true);

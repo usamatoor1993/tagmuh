@@ -27,23 +27,44 @@ class BusinessController extends Controller
         if ($validator->fails()) {
             return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
         }
+        $company = Company::where('id', $request->company_id)->first();
+        $user = Auth::user();
+        if ($company->user_id != $user->id) {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'You are not allowed to give permission'], 422);
+        }
+
         $permission = BusinessPermission::where('user_id', $request->user_id)->where('company_id', $request->company_id)->first();
         if ($permission) {
-            return response(['status' => 'error', 'code' => 422, 'message' => 'Permission already given'], 422);
-        }
-        $permission = BusinessPermission::create([
-            'user_id' => $request->user_id,
-            'company_id' => $request->company_id,
-            'post' => $request->post ?? 0,
-            'chat' => $request->chat ?? 0,
-            'group_chat' => $request->group_chat ?? 0,
-            'group_create' => $request->group_create ?? 0,
-            'ads' => $request->ads ?? 0,
-        ]);
-        if (!$permission) {
-            return response(['status' => 'error', 'code' => 422, 'message' => 'Permission not given'], 422);
+
+            $permission = BusinessPermission::where('user_id', $request->user_id)->where('company_id', $request->company_id)->update([
+                'post' => $request->post ?? 0,
+                'chat' => $request->chat ?? 0,
+                'group_chat' => $request->group_chat ?? 0,
+                'group_create' => $request->group_create ?? 0,
+                'ads' => $request->ads ?? 0,
+            ]);
+            if ($permission == 1) {
+                return response(['status' => 'success', 'code' => 200, 'message' => 'Permission updated successfully'], 200);
+            } else {
+                return response(['status' => 'error', 'code' => 422, 'message' => 'Permission not updated'], 422);
+            }
         } else {
-            return response(['status' => 'success', 'code' => 200, 'message' => 'Permission given successfully', 'data' => $permission], 200);
+
+
+            $permission = BusinessPermission::create([
+                'user_id' => $request->user_id,
+                'company_id' => $request->company_id,
+                'post' => $request->post ?? 0,
+                'chat' => $request->chat ?? 0,
+                'group_chat' => $request->group_chat ?? 0,
+                'group_create' => $request->group_create ?? 0,
+                'ads' => $request->ads ?? 0,
+            ]);
+            if (!$permission) {
+                return response(['status' => 'error', 'code' => 422, 'message' => 'Permission not given'], 422);
+            } else {
+                return response(['status' => 'success', 'code' => 200, 'message' => 'Permission given successfully', 'data' => $permission], 200);
+            }
         }
     }
 
@@ -57,15 +78,21 @@ class BusinessController extends Controller
             return response(['status' => 'error', 'code' => 422, 'message' => 'missing or wrong params', 'errors' => $validator->errors()->all()], 422);
         }
         $user = User::where('email', $request->email)->first();
+
         if ($user->user_type == 'Employee') {
             return response(['status' => 'error', 'code' => 422, 'message' => 'Employee already added'], 422);
         }
-        $user = User::where('id', $user->id)->update(['company_id' => $request->company_id, 'user_type' => 'Employee']);
-        if ($user == 1) {
-            $user = User::where('id', $request->user_id)->first();
-            return response(['status' => 'success', 'code' => 200, 'data' => $user, 'message' => 'Employee added successfully'], 200);
-        } else {
-            return response(['status' => 'error', 'code' => 422, 'message' => 'Employee not added'], 422);
+        if ($user->user_type == 'Guest') {
+
+            $user = User::where('id', $user->id)->update(['company_id' => $request->company_id, 'user_type' => 'Employee']);
+            if ($user == 1) {
+                $user = User::where('id', $request->user_id)->first();
+                return response(['status' => 'success', 'code' => 200, 'data' => $user, 'message' => 'Employee added successfully'], 200);
+            } else {
+                return response(['status' => 'error', 'code' => 422, 'message' => 'Employee not added'], 422);
+            }
+        }else {
+            return response(['status' => 'error', 'code' => 422, 'message' => 'User is not a Guest'], 422);
         }
     }
 
@@ -174,7 +201,6 @@ class BusinessController extends Controller
             } else {
                 $imageName = array_merge($getimageName, $request->imagesUrl);
             }
-
         } else {
             $imageName = $request->imagesUrl;
         }
@@ -226,8 +252,7 @@ class BusinessController extends Controller
 
     public function addInvoice(Request $request)
     {
-        $validator = Validator::make($request->all
-        (), [
+        $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,id',
             'company_id' => 'required|exists:companies,id',
             'issue_date' => 'required',
@@ -262,7 +287,8 @@ class BusinessController extends Controller
             return response(['status' => 'success', 'code' => 200, 'message' => 'Invoice added successfully', 'data' => $invoice], 200);
         }
     }
-    public function updateInvoice(Request $request){
+    public function updateInvoice(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'invoice_id' => 'required|exists:invoices,id',
         ]);
@@ -290,7 +316,6 @@ class BusinessController extends Controller
         } else {
             return response(['status' => 'error', 'code' => 422, 'message' => 'Invoice not updated'], 422);
         }
-         
     }
 
     public function deleteInvoice(Request $request)
@@ -324,7 +349,8 @@ class BusinessController extends Controller
         }
     }
 
-    public function addEventAd(Request $request){
+    public function addEventAd(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'event_id' => 'required|exists:events,id',
             'title' => 'required',
@@ -362,7 +388,8 @@ class BusinessController extends Controller
         }
     }
 
-    public function updateEventAd(Request $request){
+    public function updateEventAd(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'event_ad_id' => 'required|exists:event_ads,id',
         ]);
@@ -390,7 +417,6 @@ class BusinessController extends Controller
             } else {
                 $imageName = array_merge($getimageName, $request->imagesUrl);
             }
-
         } else {
             $imageName = $request->imagesUrl;
         }

@@ -31,8 +31,8 @@ return new class extends Migration
             $table->string('rating')->default(0);
             $table->tinyInteger('is_selected')->default(0);
             $table->string('event_permission')->default('event');
-            $table->time('start_time')->nullable();
-            $table->time('end_time')->nullable();
+            $table->string('start_time')->nullable();
+            $table->string('end_time')->nullable();
 
             $table->timestamps();
         });

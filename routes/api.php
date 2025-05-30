@@ -129,6 +129,7 @@ Route::post('/stop-stream', 'App\Http\Controllers\Api\StreamController@stopStrea
 Route::get('/get-all-live-streams', 'App\Http\Controllers\Api\StreamController@getAllLiveStreams')->middleware('auth:sanctum');
 Route::post('join-stream', 'App\Http\Controllers\Api\StreamController@viewStream')->middleware('auth:sanctum');
 
+Route::post('give-permission', 'App\Http\Controllers\Api\BusinessController@givePermission')->middleware('auth:sanctum');
 
 ///////////////////////// Admin Routes //////////////////////////
 Route::post('/adminLogin', 'App\Http\Controllers\Admin\AuthController@login');
