@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AgoraVideoController;
 use App\Http\Middleware\IsAdmin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -130,6 +131,8 @@ Route::get('/get-all-live-streams', 'App\Http\Controllers\Api\StreamController@g
 Route::post('join-stream', 'App\Http\Controllers\Api\StreamController@viewStream')->middleware('auth:sanctum');
 
 Route::post('give-permission', 'App\Http\Controllers\Api\BusinessController@givePermission')->middleware('auth:sanctum');
+
+Route::post('/agora-token', [AgoraVideoController::class, 'token']);
 
 ///////////////////////// Admin Routes //////////////////////////
 Route::post('/adminLogin', 'App\Http\Controllers\Admin\AuthController@login');
