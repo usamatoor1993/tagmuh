@@ -132,7 +132,7 @@ Route::post('join-stream', 'App\Http\Controllers\Api\StreamController@viewStream
 
 Route::post('give-permission', 'App\Http\Controllers\Api\BusinessController@givePermission')->middleware('auth:sanctum');
 
-Route::post('/agora-token', [AgoraVideoController::class, 'token']);
+Route::post('/agora-token', [AgoraVideoController::class, 'token'])->middleware('auth:sanctum');
 
 ///////////////////////// Admin Routes //////////////////////////
 Route::post('/adminLogin', 'App\Http\Controllers\Admin\AuthController@login');
