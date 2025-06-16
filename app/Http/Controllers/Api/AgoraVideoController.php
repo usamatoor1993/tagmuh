@@ -14,8 +14,8 @@ class AgoraVideoController extends Controller
     public function token(Request $request)
     {
 
-        $appID = env('AGORA_APP_ID');
-        $appCertificate = env('AGORA_APP_CERTIFICATE');
+        $appID = config('services.agora.app_id');
+        $appCertificate = config('services.agora.app_certificate');
         $channelName = $request->channelName;
         $user = Auth::user()->first_name;
         $role = 0;
